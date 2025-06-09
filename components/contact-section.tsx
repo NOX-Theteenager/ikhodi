@@ -2,6 +2,7 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { Mail, MapPin, Phone, MessageCircle } from "lucide-react"
 import { motion } from "framer-motion"
+import Image from "next/image"
 
 export default function ContactSection() {
   const contactInfo = [
@@ -22,8 +23,8 @@ export default function ContactSection() {
     },
   ]
 
-  const apiKey = "AIzaSyDnvfAfOrW_u_Dni9U7lN37aCt1_q8Ubew"
-  const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=3.848032,11.502075&zoom=15&size=600x200&maptype=roadmap&markers=color:red%7C3.848032,11.502075&key=${apiKey}`
+  // const apiKey = "clé_api_google_maps" 
+  // const mapUrl = `https://maps.googleapis.com/maps/api/staticmap?center=3.848032,11.502075&zoom=15&size=600x200&maptype=roadmap&markers=color:red%7C3.848032,11.502075&key=${apiKey}`
   const googleMapsUrl = "https://maps.app.goo.gl/fQBbLEy4cwMwoYrGA"
 
   return (
@@ -175,7 +176,8 @@ export default function ContactSection() {
               <Card className="overflow-hidden border-rose-pale/50 hover:shadow-md transition-all duration-300 card-glow">
                 <CardContent className="p-0">
                   <img
-                    src={mapUrl}
+                    // src={mapUrl}
+                    src="/images/ikhodiMap.png"
                     alt="Carte de la boutique à Yaoundé"
                     width="100%"
                     height="200"

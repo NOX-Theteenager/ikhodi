@@ -12,36 +12,42 @@ const projects = [
     title: "Refonte de marque",
     category: "Design",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Nouvelle identité visuelle et charte graphique pour une marque innovante.",
   },
   {
     id: 2,
     title: "Campagne digitale",
     category: "Marketing",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Mise en place d'une campagne publicitaire sur les réseaux sociaux.",
   },
   {
     id: 3,
     title: "Site e-commerce",
     category: "Web",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Développement d'une boutique en ligne performante et responsive.",
   },
   {
     id: 4,
     title: "Identité visuelle",
     category: "Design",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Création d'un logo et d'une palette de couleurs pour une startup.",
   },
   {
     id: 5,
     title: "Application mobile",
     category: "Web",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Application mobile intuitive pour faciliter la gestion des tâches.",
   },
   {
     id: 6,
     title: "Stratégie SEO",
     category: "Marketing",
     image: "/placeholder.svg?height=300&width=400",
+    description: "Optimisation du référencement naturel pour augmenter la visibilité.",
   },
 ]
 
@@ -128,6 +134,7 @@ export default function PortfolioSection() {
                       >
                         <h3 className="text-xl font-bold text-white">{project.title}</h3>
                         <p className="text-sm text-white/80">{project.category}</p>
+                        <p className="text-xs text-white/70 mt-2">{project.description}</p>
                       </motion.div>
                     </div>
                   </motion.div>

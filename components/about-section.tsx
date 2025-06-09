@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import { CheckCircle } from "lucide-react"
 import ParallaxSection from "./parallax-section"
 import FloatingLogo from "./floating-logo"
+import Image from "next/image"
 
 export default function AboutSection() {
   const advantages = [
@@ -11,6 +12,26 @@ export default function AboutSection() {
     "Approche centrée sur les résultats",
     "Solutions personnalisées",
     "Support continu",
+  ]
+
+  // Membres de l'équipe
+  const teamMembers = [
+    {
+      name: "Stephane NGUETSA",
+      image: "/images/stephane.jpg",
+    },
+    {
+      name: "Vanessa NODEM",
+      image: "/images/stephane.jpg",
+    },
+    {
+      name: "Amina",
+      image: "/images/stephane.jpg",
+    },
+    {
+      name: "David Leroy",
+      image: "/images/david.jpg",
+    },
   ]
 
   return (
@@ -73,12 +94,39 @@ export default function AboutSection() {
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
           >
-            <div className="relative h-[300px] w-full md:h-[400px] lg:h-[500px]">
-              <div className="absolute inset-0 bg-gradient-to-br from-rose-vif/20 via-violet-mauve/20 to-violet-fonce/20 rounded-lg flex items-center justify-center backdrop-blur-sm">
+            <div className="relative h-[300px] w-full md:h-[400px] lg:h-[500px] flex flex-col items-center justify-center">
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-vif/20 via-violet-mauve/20 to-violet-fonce/20 rounded-lg flex flex-col items-center justify-center backdrop-blur-sm">
                 <div className="text-center p-6">
                   <FloatingLogo />
                   <h3 className="text-xl font-bold mb-2 text-violet-fonce dark:text-rose-pale">Notre équipe</h3>
-                  <p className="text-muted-foreground">Des experts passionnés par le digital</p>
+                  <p className="text-muted-foreground mb-6">Des experts passionnés par le digital</p>
+                  {/* Bulles des membres */}
+                  <div className="flex flex-wrap gap-4 justify-center mt-4">
+                    {teamMembers.map((member, idx) => (
+                      <div
+                        key={idx}
+                        className="relative group w-16 h-16 md:w-20 md:h-20 rounded-full bg-violet-mauve/40 flex items-center justify-center shadow-lg cursor-pointer transition-all duration-300 hover:scale-110"
+                      >
+                        {/* Initiale visible */}
+                        <span className="text-2xl md:text-3xl font-bold text-violet-fonce dark:text-rose-pale z-10 group-hover:opacity-0 transition-opacity duration-300">
+                          {member.name[0]}
+                        </span>
+                        {/* Image au survol */}
+                        <div className="absolute inset-0 rounded-full overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-20">
+                          <Image
+                            src={member.image}
+                            alt={member.name}
+                            fill
+                            style={{ objectFit: "cover" }}
+                          />
+                        </div>
+                        {/* Tooltip nom */}
+                        <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 px-2 py-1 rounded bg-black/80 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-30">
+                          {member.name}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
