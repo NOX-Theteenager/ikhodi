@@ -2,26 +2,444 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 20%;
+    --primary: 330 83% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 295 43% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 320 45% 90%;
+    --muted-foreground: 0 0% 45%;
+    --accent: 320 45% 90%;
+    --accent-foreground: 0 0% 20%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 320 20% 85%;
+    --input: 320 20% 85%;
+    --ring: 330 83% 52%;
+    --radius: 0.5rem;
+
+    --chart-1: 330 83% 52%;
+    --chart-2: 295 43% 40%;
+    --chart-3: 340 75% 45%;
+    --chart-4: 285 50% 35%;
+    --chart-5: 320 45% 90%;
+    --chart-6: 295 60% 25%;
+
+    /* Couleurs personnalisées */
+    --rose-vif: 330 83% 52%;
+    --violet-mauve: 295 43% 40%;
+    --rose-pale: 320 45% 90%;
+    --rouge-framboise: 340 75% 45%;
+    --violet-fonce: 285 50% 25%;
+  }
+
+  .dark {
+    --background: 0 0% 4%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 6%;
+    --card-foreground: 0 0% 95%;
+    --popover: 0 0% 6%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 330 83% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 295 43% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 12%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 330 83% 52%;
+
+    --chart-1: 330 83% 52%;
+    --chart-2: 295 43% 40%;
+    --chart-3: 340 75% 45%;
+    --chart-4: 285 50% 35%;
+    --chart-5: 320 45% 90%;
+    --chart-6: 295 60% 25%;
+
+    /* Couleurs personnalisées pour le mode sombre */
+    --rose-vif: 330 83% 52%;
+    --violet-mauve: 295 43% 40%;
+    --rose-pale: 320 20% 15%;
+    --rouge-framboise: 340 75% 45%;
+    --violet-fonce: 285 50% 25%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    position: relative;
+  }
+
+  /* Background futuriste pour le mode clair */
+  body {
+    background: radial-gradient(ellipse at top, rgba(245, 214, 230, 0.3) 0%, rgba(255, 255, 255, 0.9) 50%),
+      radial-gradient(ellipse at bottom, rgba(138, 59, 143, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%),
+      linear-gradient(135deg, rgba(233, 25, 124, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
+    background-attachment: fixed;
+  }
+
+  /* Grille futuriste en arrière-plan pour le mode clair */
+  body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(233, 25, 124, 0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(138, 59, 143, 0.02) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Effet de particules lumineuses pour le mode clair */
+  body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(2px 2px at 20px 30px, rgba(233, 25, 124, 0.2), transparent),
+      radial-gradient(2px 2px at 40px 70px, rgba(138, 59, 143, 0.2), transparent),
+      radial-gradient(1px 1px at 90px 40px, rgba(209, 34, 91, 0.2), transparent),
+      radial-gradient(1px 1px at 130px 80px, rgba(94, 38, 101, 0.2), transparent),
+      radial-gradient(2px 2px at 160px 30px, rgba(233, 25, 124, 0.1), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle-light 25s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes sparkle-light {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 0.7;
+    }
+    50% {
+      transform: translateY(-15px) rotate(180deg);
+      opacity: 0.5;
+    }
+  }
+
+  /* Background uniforme pour le mode sombre - SIMPLIFIÉ */
+  .dark body {
+    background: #0a0a0a;
+    background-attachment: fixed;
+  }
+
+  /* Grille futuriste en arrière-plan pour le mode sombre */
+  .dark body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(rgba(233, 25, 124, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(233, 25, 124, 0.03) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  /* Effet de particules lumineuses pour le mode sombre */
+  .dark body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(2px 2px at 20px 30px, rgba(233, 25, 124, 0.3), transparent),
+      radial-gradient(2px 2px at 40px 70px, rgba(138, 59, 143, 0.3), transparent),
+      radial-gradient(1px 1px at 90px 40px, rgba(209, 34, 91, 0.3), transparent),
+      radial-gradient(1px 1px at 130px 80px, rgba(94, 38, 101, 0.3), transparent),
+      radial-gradient(2px 2px at 160px 30px, rgba(233, 25, 124, 0.2), transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: sparkle 20s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes sparkle {
+    0%,
+    100% {
+      transform: translateY(0px) rotate(0deg);
+      opacity: 1;
+    }
+    50% {
+      transform: translateY(-10px) rotate(180deg);
+      opacity: 0.8;
+    }
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Optimisations mobiles */
+  @media (max-width: 768px) {
+    body::before,
+    body::after,
+    .dark body::before,
+    .dark body::after {
+      background-size: 30px 30px; /* Grille plus petite sur mobile */
+    }
+
+    body::after,
+    .dark body::after {
+      animation-duration: 30s; /* Animation plus lente sur mobile */
+    }
+  }
+
+  /* Réduction des animations sur les appareils avec préférence pour moins de mouvement */
+  @media (prefers-reduced-motion: reduce) {
+    body::after,
+    .dark body::after {
+      animation: none;
+    }
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Ajout de classes pour les micro-interactions et effets 3D */
+@layer components {
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+
+  /* Optimisation mobile pour hover-lift */
+  @media (hover: hover) {
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  .hover-glow {
+    @apply transition-all duration-300;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hover-glow::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(233, 25, 124, 0.2) 0%, rgba(255, 255, 255, 0) 70%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  @media (hover: hover) {
+    .hover-glow:hover::after {
+      opacity: 1;
+    }
+  }
+
+  .pulse-on-click {
+    @apply transition-transform duration-100;
+  }
+
+  .pulse-on-click:active {
+    transform: scale(0.95);
+  }
+
+  .ripple {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ripple::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    opacity: 1;
+  }
+
+  @keyframes ripple {
+    to {
+      transform: scale(2.5);
+      opacity: 0;
+    }
+  }
+
+  /* Classes pour les effets 3D CSS */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+
+  /* Animation de rotation 3D - optimisée pour mobile */
+  @keyframes rotate3d {
+    0% {
+      transform: rotateY(0deg) rotateX(0deg);
+    }
+    25% {
+      transform: rotateY(90deg) rotateX(5deg);
+    }
+    50% {
+      transform: rotateY(180deg) rotateX(0deg);
+    }
+    75% {
+      transform: rotateY(270deg) rotateX(-5deg);
+    }
+    100% {
+      transform: rotateY(360deg) rotateX(0deg);
+    }
+  }
+
+  .animate-rotate3d {
+    animation: rotate3d 8s linear infinite;
+  }
+
+  /* Réduction des animations 3D sur mobile */
+  @media (max-width: 768px) {
+    .animate-rotate3d {
+      animation-duration: 12s;
+    }
+  }
+
+  /* Effet de flottement */
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Amélioration des cartes en mode sombre */
+  .dark .card-glow {
+    box-shadow: 0 0 20px rgba(233, 25, 124, 0.1);
+    border: 1px solid rgba(233, 25, 124, 0.2);
+  }
+
+  @media (hover: hover) {
+    .dark .card-glow:hover {
+      box-shadow: 0 0 30px rgba(233, 25, 124, 0.2);
+      border: 1px solid rgba(233, 25, 124, 0.3);
+    }
+  }
+
+  /* Amélioration des cartes en mode clair */
+  .card-glow {
+    box-shadow: 0 0 15px rgba(245, 214, 230, 0.5);
+    border: 1px solid rgba(233, 25, 124, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  @media (hover: hover) {
+    .card-glow:hover {
+      box-shadow: 0 0 25px rgba(233, 25, 124, 0.15);
+      border: 1px solid rgba(233, 25, 124, 0.2);
+    }
+  }
+
+  /* Optimisations mobiles générales */
+  @media (max-width: 768px) {
+    .container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    /* Réduction des espacements sur mobile */
+    .py-12 {
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .py-20 {
+      padding-top: 3rem;
+      padding-bottom: 3rem;
+    }
+
+    /* Textes plus petits sur mobile */
+    .text-3xl {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+    }
+
+    .text-4xl {
+      font-size: 2.25rem;
+      line-height: 2.5rem;
+    }
+
+    .text-5xl {
+      font-size: 2.5rem;
+      line-height: 1;
+    }
+
+    .text-6xl {
+      font-size: 3rem;
+      line-height: 1;
+    }
+  }
+
+  /* Optimisations pour très petits écrans */
+  @media (max-width: 480px) {
+    .text-xl {
+      font-size: 1.125rem;
+      line-height: 1.75rem;
+    }
+
+    .gap-6 {
+      gap: 1rem;
+    }
+
+    .gap-4 {
+      gap: 0.75rem;
+    }
+
+    .p-6 {
+      padding: 1rem;
+    }
+
+    .px-8 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
   }
 }
