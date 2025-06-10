@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useEffect, useState } from "react" // Added useEffect, useState
 import CSS3DLogo from "./css-3d-logo"
 import ParallaxSection from "./parallax-section"
 
@@ -15,6 +15,27 @@ export default function HeroSection() {
 
   const y = useTransform(scrollYProgress, [0, 1], [0, 300])
   const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
+
+  // State for click handlers
+  const [onServicesClick, setOnServicesClick] = useState(() => () => {})
+  const [onContactClick, setOnContactClick] = useState(() => () => {})
+
+  useEffect(() => {
+    // Define the actual logic inside useEffect to ensure client-side execution context
+    setOnServicesClick(() => () => {
+      const servicesSection = document.getElementById("services")
+      if (servicesSection) {
+        window.scrollTo({ top: servicesSection.offsetTop, behavior: "smooth" })
+      }
+    })
+
+    setOnContactClick(() => () => {
+      const contactSection = document.getElementById("contact")
+      if (contactSection) {
+        window.scrollTo({ top: contactSection.offsetTop, behavior: "smooth" })
+      }
+    })
+  }, []) // Empty dependency array ensures this runs once on mount (client-side)
 
   return (
     <section ref={ref} className="relative overflow-hidden py-12 md:py-20 lg:py-32">
@@ -69,7 +90,7 @@ export default function HeroSection() {
                 <Button
                   size="lg"
                   className="w-full min-[400px]:w-auto px-6 md:px-8 bg-rose-vif hover:bg-rouge-framboise ripple"
-                  onClick={() => window.scrollTo({ top: document.getElementById("services")?.offsetTop, behavior: "smooth" })}
+                  onClick={onServicesClick}
                 >
                   Nos services
                 </Button>
@@ -79,7 +100,7 @@ export default function HeroSection() {
                   size="lg"
                   variant="outline"
                   className="w-full min-[400px]:w-auto px-6 md:px-8 border-violet-mauve text-violet-mauve hover:bg-violet-mauve hover:text-white ripple"
-                  onClick={() => window.scrollTo({ top: document.getElementById("contact")?.offsetTop, behavior: "smooth" })}
+                  onClick={onContactClick}
                 >
                   Contactez-nous
                 </Button>
