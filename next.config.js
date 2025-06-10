@@ -55,15 +55,7 @@ const nextConfig = {
   },
   // Optimisations de performance
   experimental: {
-    optimizeCss: true,
-    // Activer la compression Brotli qui est plus efficace que gzip
-    compress: true,
-    // Optimisation des images
-    images: {
-      unoptimized: false, // Activer l'optimisation des images
-    },
-    // Optimisation du chargement des polices
-    fontLoaders: [{ loader: "@next/font/google", options: { subsets: ["latin"] } }],
+    optimizeCss: false, // Disabled to test critters issue
   },
   // Configuration des images
   images: {

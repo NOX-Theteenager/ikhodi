@@ -88,7 +88,7 @@
 
   /* Background futuriste pour le mode clair */
   body {
-    background: radial-gradient(ellipse at top, rgba(245, 214, 230, 0.3) 0%, rgba(255, 255, 255, 0.9) 50%),
+    background: radial-gradient(ellipse at top, rgba(245, 214, 230, 0.3) 0%, rgba(245, 214, 230, 0.3) 50%),
       radial-gradient(ellipse at bottom, rgba(138, 59, 143, 0.1) 0%, rgba(255, 255, 255, 0.9) 50%),
       linear-gradient(135deg, rgba(233, 25, 124, 0.05) 0%, rgba(255, 255, 255, 1) 100%);
     background-attachment: fixed;
