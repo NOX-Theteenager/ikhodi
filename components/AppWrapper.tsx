@@ -1,12 +1,17 @@
 "use client"
 
 import { useState } from "react"
-import IntroCinematic from "@/components/IntroCinematic"
+// import IntroCinematic from "@/components/IntroCinematic"; // Removed static import
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import dynamic from "next/dynamic"
 
 const OptimizedSecurityProvider = dynamic(() => import("@/components/optimized-security-provider"), {
+  ssr: false,
+  loading: () => null,
+})
+
+const IntroCinematic = dynamic(() => import("@/components/IntroCinematic"), { // Added dynamic import
   ssr: false,
   loading: () => null,
 })

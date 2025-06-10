@@ -55,7 +55,7 @@ const nextConfig = {
   },
   // Optimisations de performance
   experimental: {
-    optimizeCss: true,
+    optimizeCss: false, // Disabled to test critters issue
   },
   // Configuration des images
   images: {
