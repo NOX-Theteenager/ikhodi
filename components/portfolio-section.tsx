@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, X, ExternalLink, Eye } from "lucide-react"
-import Image from "next/image"
+import OptimizedImage from "./optimized-image"
+import ImageGallery from "./image-gallery"
+import { preloadImages } from "@/lib/image-utils"
 
 const categories = ["Tous", "Design", "Marketing", "Web"]
 
@@ -22,7 +24,7 @@ const projects = [
       "/placeholder.svg?height=600&width=800",
     ],
     description:
-      "Création d'une identité visuelle moderne et impactante pour une startup technologique. Le projet comprenait la conception du logo, de la charte graphique, des supports de communication et de l'ensemble des éléments visuels de la marque.",
+      "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
     client: "TechStart Inc.",
     year: "2024",
     services: ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
@@ -33,7 +35,7 @@ const projects = [
     category: "Marketing",
     image: "/placeholder.svg?height=300&width=400",
     description:
-      "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante pour augmenter la visibilité en ligne.",
+      "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante.",
     client: "Fashion Brand",
     year: "2024",
     services: ["SEO", "Social Media", "Google Ads", "Analytics"],
@@ -44,7 +46,7 @@ const projects = [
     category: "Web",
     image: "/placeholder.svg?height=300&width=400",
     description:
-      "Développement d'une plateforme e-commerce responsive avec système de paiement intégré et interface d'administration.",
+      "Développement d'une plateforme e-commerce responsive avec système de paiement intégré.",
     client: "Boutique Online",
     year: "2024",
     services: ["Développement", "UX/UI", "E-commerce", "Responsive"],
@@ -60,7 +62,7 @@ const projects = [
       "/placeholder.svg?height=600&width=800",
     ],
     description:
-      "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique. Le projet incluait le logo, les menus, la signalétique et tous les supports de communication.",
+      "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique.",
     client: "Le Gourmet",
     year: "2023",
     services: ["Branding", "Menu Design", "Signalétique", "Packaging"],
@@ -70,7 +72,7 @@ const projects = [
     title: "Application mobile innovante",
     category: "Web",
     image: "/placeholder.svg?height=300&width=400",
-    description: "Conception et développement d'une application mobile native avec interface utilisateur intuitive.",
+    description: "Conception et développement d'une application mobile native.",
     client: "MobileApp Co.",
     year: "2024",
     services: ["Mobile App", "UI/UX", "Native Development", "API"],
@@ -80,7 +82,7 @@ const projects = [
     title: "Stratégie SEO avancée",
     category: "Marketing",
     image: "/placeholder.svg?height=300&width=400",
-    description: "Optimisation complète du référencement naturel avec audit technique et stratégie de contenu.",
+    description: "Optimisation complète du référencement naturel avec audit technique.",
     client: "Business Corp",
     year: "2024",
     services: ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
@@ -98,7 +100,7 @@ const projects = [
       "/placeholder.svg?height=600&width=800",
     ],
     description:
-      "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques haut de gamme. Focus sur l'expérience utilisateur et l'impact environnemental.",
+      "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques.",
     client: "Beauty Luxe",
     year: "2023",
     services: ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
@@ -108,7 +110,7 @@ const projects = [
     title: "Campagne réseaux sociaux",
     category: "Marketing",
     image: "/placeholder.svg?height=300&width=400",
-    description: "Gestion complète des réseaux sociaux avec création de contenu et community management.",
+    description: "Gestion complète des réseaux sociaux avec création de contenu.",
     client: "Social Brand",
     year: "2024",
     services: ["Social Media", "Content Creation", "Community Management", "Influencers"],
@@ -116,30 +118,12 @@ const projects = [
 ]
 
 const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: boolean; onClose: () => void }) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0)
-
-  const nextImage = () => {
-    if (project.images) {
-      setCurrentImageIndex((prev) => (prev + 1) % project.images.length)
-    }
-  }
-
-  const prevImage = () => {
-    if (project.images) {
-      setCurrentImageIndex((prev) => (prev - 1 + project.images.length) % project.images.length)
-    }
-  }
-
-  const goToImage = (index: number) => {
-    setCurrentImageIndex(index)
-  }
-
   const handleContactClick = () => {
     const element = document.querySelector("#contact")
     if (element) {
       element.scrollIntoView({ behavior: "smooth" })
     }
-    onClose() // Close the modal after scrolling
+    onClose()
   }
 
   if (!project) return null
@@ -179,66 +163,23 @@ const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: bool
             <div className="grid lg:grid-cols-2 h-full">
               <div className="relative bg-muted/30 flex items-center justify-center min-h-[300px] md:min-h-[400px] lg:min-h-[600px]">
                 {project.images && project.images.length > 0 ? (
-                  <>
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={currentImageIndex}
-                        className="relative w-full h-full flex items-center justify-center"
-                        initial={{ opacity: 0, x: 20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: -20 }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        <Image
-                          src={project.images[currentImageIndex] || "/placeholder.svg"}
-                          alt={`${project.title} - Image ${currentImageIndex + 1}`}
-                          fill
-                          className="object-contain p-4"
-                        />
-                      </motion.div>
-                    </AnimatePresence>
-                    {project.images.length > 1 && (
-                      <>
-                        <motion.button
-                          onClick={prevImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background smooth-transition focus-ring"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </motion.button>
-                        <motion.button
-                          onClick={nextImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-background/80 backdrop-blur-sm rounded-full hover:bg-background smooth-transition focus-ring"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.9 }}
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </motion.button>
-                      </>
-                    )}
-                    {project.images.length > 1 && (
-                      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        {project.images.map((_: string, index: number) => (
-                          <motion.button
-                            key={index}
-                            onClick={() => goToImage(index)}
-                            className={`w-2 h-2 rounded-full smooth-transition ${
-                              index === currentImageIndex ? "bg-rose-vif" : "bg-white/50 hover:bg-white/70"
-                            }`}
-                            whileHover={{ scale: 1.2 }}
-                            whileTap={{ scale: 0.9 }}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </>
+                  <ImageGallery
+                    images={project.images}
+                    alt={project.title}
+                    className="w-full h-full"
+                    showThumbnails={true}
+                    allowZoom={true}
+                    allowDownload={false}
+                  />
                 ) : (
-                  <Image
+                  <OptimizedImage
                     src={project.image || "/placeholder.svg"}
                     alt={project.title}
                     fill
                     className="object-contain p-4"
+                    quality={85}
+                    priority={true}
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 60vw"
                   />
                 )}
               </div>
@@ -319,9 +260,19 @@ export default function PortfolioSection() {
   const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 6)
   const hasMoreProjects = filteredProjects.length > 6
 
+  useEffect(() => {
+    // Précharger les images des projets affichés
+    const imagesToPreload = displayedProjects.map((project) => project.image)
+    preloadImages(imagesToPreload, 3)
+  }, [displayedProjects])
+
   const openModal = (project: any) => {
     setSelectedProject(project)
     setIsModalOpen(true)
+    // Précharger les images de la galerie si elles existent
+    if (project.images) {
+      preloadImages(project.images, 2)
+    }
   }
 
   const closeModal = () => {
@@ -370,8 +321,7 @@ export default function PortfolioSection() {
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="data-[state=active]:bg-rose-vif data-[state=active]:text-white smooth-transition text-sm py-2"
-                >
+                  className="data-[state=active]:bg-rose-vif data-[state=active]:text-white smooth-transition text-sm py-2 applicare la police ici">
                   {category}
                 </TabsTrigger>
               ))}
@@ -396,12 +346,15 @@ export default function PortfolioSection() {
                       onClick={() => openModal(project)}
                     >
                       <div className="relative">
-                        <Image
+                        <OptimizedImage
                           src={project.image || "/placeholder.svg"}
                           alt={project.title}
                           width={400}
                           height={300}
                           className="h-64 w-full object-cover smooth-transition group-hover:scale-105"
+                          quality={75}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          priority={index < 3}
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent md:opacity-0 md:group-hover:opacity-100 smooth-transition flex items-end p-4 md:p-6">
                           <motion.div
