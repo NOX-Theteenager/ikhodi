@@ -54,7 +54,7 @@ export default function CSS3DLogo() {
           <div className="relative w-full h-full">
             <Image
               src="/images/logo.png"
-              alt="Jutu Logo"
+              alt="ikhodi Logo"
               fill
               className="object-contain drop-shadow-[0_0_20px_rgba(0,195,255,0.6)]"
             />
@@ -70,7 +70,7 @@ export default function CSS3DLogo() {
           }}
         >
           <div className="relative w-full h-full opacity-30 blur-sm">
-            <Image src="/images/logo.png" alt="Jutu Logo Reflection" fill className="object-contain" />
+            <Image src="/images/logo.png" alt="ikhodi Logo Reflection" fill className="object-contain" />
           </div>
         </motion.div>
 

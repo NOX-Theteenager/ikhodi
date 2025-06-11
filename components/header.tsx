@@ -56,7 +56,7 @@ export default function Header() {
         <Link href="/" className="flex items-center space-x-2 hover-lift">
           <Image
             src="/images/logo.png"
-            alt="DigitalCraft Studio Logo"
+            alt="ikhodi Logo"
             width={120}
             height={40}
             className="object-contain"
