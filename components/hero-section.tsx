@@ -128,7 +128,7 @@ export default function HeroSection() {
   }
 
   return (
-    <section ref={ref} className="relative overflow-hidden py-12 md:py-20 lg:py-32">
+    <section ref={ref} className="relative overflow-hidden py-8 md:py-20 lg:py-25 pt-0">
       {/* Parallax background optimisé */}
       <div className="absolute inset-0 overflow-hidden">
         <ParallaxSection baseVelocity={0.08} direction="up">
@@ -334,5 +334,5 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
-  )
+  )
 }
