@@ -1,0 +1,117 @@
+[
+  {
+    "id": 1,
+    "title": "Refonte de marque complète",
+    "category": "Design",
+    "image": "/placeholder.svg?height=300&width=400",
+    "images": [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800"
+    ],
+    "description": "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
+    "client": "TechStart Inc.",
+    "year": "2024",
+    "services": ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
+    "externalLink": "https://example.com/project1"
+  },
+  {
+    "id": 2,
+    "title": "Campagne digitale multi-canal",
+    "category": "Marketing",
+    "image": "/placeholder.svg?height=300&width=400",
+    "description": "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante.",
+    "client": "Fashion Brand",
+    "year": "2024",
+    "services": ["SEO", "Social Media", "Google Ads", "Analytics"],
+    "externalLink": "https://example.com/project2"
+  },
+  {
+    "id": 3,
+    "title": "Waco Cargo",
+    "category": "Web",
+    "image": "/images/wacocargo.png?height=300&width=400",
+    "images": [
+      "/images/wacocargo1.png?height=600&width=800",
+      "/images/wacocargo2.png?height=600&width=800",
+      "/images/wacocargo3.png?height=600&width=800"
+    ],
+    "description": "Développement d'une plateforme d'importation et exportation de colis.",
+    "client": "Waco cargo",
+    "year": "2024",
+    "services": ["Développement", "UX/UI", "Responsive"],
+    "externalLink": "https://wacocargo.com"
+  },
+  {
+    "id": 4,
+    "title": "Identité visuelle restaurant",
+    "category": "Design",
+    "image": "/placeholder.svg?height=300&width=400",
+    "images": [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800"
+    ],
+    "description": "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique.",
+    "client": "Le Gourmet",
+    "year": "2023",
+    "services": ["Branding", "Menu Design", "Signalétique", "Packaging"],
+    "externalLink": "https://example.com/project4"
+  },
+  {
+    "id": 5,
+    "title": "GÉNÉRALE DES PROS",
+    "category": "Web",
+    "image": "/images/generaldespros.png?height=300&width=400",
+    "images": [
+      "/images/generaldespros1.png?height=600&width=800",
+      "/images/generaldespros2.png?height=600&width=800"
+    ],
+    "description": "GÉNÉRALE DES PROS SARL est une entreprise de transit expérimentée et fiable, basée au Cameroun. Nous nous spécialisons dans une gamme complète de services de transit et de logistique pour faciliter vos importations et exportations.",
+    "client": "GÉNÉRALE DES PROS SARL",
+    "year": "2024",
+    "services": ["Développement", "UX/UI", "Responsive"],
+    "externalLink": "https://generaledespros.com"
+  },
+  {
+    "id": 6,
+    "title": "Stratégie SEO avancée",
+    "category": "Marketing",
+    "image": "/placeholder.svg?height=300&width=400",
+    "description": "Optimisation complète du référencement naturel avec audit technique.",
+    "client": "Business Corp",
+    "year": "2024",
+    "services": ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
+    "externalLink": "https://example.com/project6"
+  },
+  {
+    "id": 7,
+    "title": "Packaging produit premium",
+    "category": "Design",
+    "image": "/placeholder.svg?height=300&width=400",
+    "images": [
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800",
+      "/placeholder.svg?height=600&width=800"
+    ],
+    "description": "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques.",
+    "client": "Beauty Luxe",
+    "year": "2023",
+    "services": ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
+    "externalLink": "https://example.com/project7"
+  },
+  {
+    "id": 8,
+    "title": "Campagne réseaux sociaux",
+    "category": "Marketing",
+    "image": "/placeholder.svg?height=300&width=400",
+    "description": "Gestion complète des réseaux sociaux avec création de contenu.",
+    "client": "Social Brand",
+    "year": "2024",
+    "services": ["Social Media", "Content Creation", "Community Management", "Influencers"],
+    "externalLink": "https://example.com/project8"
+  }
+]
