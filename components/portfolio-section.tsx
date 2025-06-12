@@ -14,21 +14,21 @@ const categories = ["Tous", "Design", "Marketing", "Web"]
 const projects = [
   {
     id: 1,
-    title: "Refonte de marque complète",
-    category: "Design",
-    image: "/placeholder.svg?height=300&width=400",
+    title: "Alpha Travel",
+    category: "Web",
+    image: "/images/alphatravel.png?height=300&width=400",
     images: [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
+      "/images/alphatravel.png?height=600&width=800",
+      "/images/alphatravel1.png?height=600&width=800",
+      // "/placeholder.svg?height=600&width=800",
+      // "/placeholder.svg?height=600&width=800",
     ],
     description:
       "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
     client: "TechStart Inc.",
     year: "2024",
     services: ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
-    externalLink: "https://example.com/project1",
+    externalLink: "https://alfatraveltour.net/",
   },
   {
     id: 2,
@@ -40,7 +40,7 @@ const projects = [
     client: "Fashion Brand",
     year: "2024",
     services: ["SEO", "Social Media", "Google Ads", "Analytics"],
-    externalLink: "https://example.com/project2",
+    
   },
   {
     id: 3,
@@ -48,9 +48,9 @@ const projects = [
     category: "Web",
     image: "/images/wacocargo.png?height=300&width=400",
     images: [
-      "/images/wacocargo1.png?height=600&width=800",
-      "/images/wacocargo2.png?height=600&width=800",
-      "/images/wacocargo3.png?height=600&width=800",
+      "/images/wacocargo.png?height=600&width=800",
+      // "/images/wacocargo2.png?height=600&width=800",
+      // "/images/wacocargo3.png?height=600&width=800",
     ],
     description:
       "Développement d'une plateforme d'importation et exportation de colis.",
@@ -124,14 +124,14 @@ const projects = [
   },
   {
     id: 8,
-    title: "Campagne réseaux sociaux",
+    title: "Leaders Cosmétique",
     category: "Marketing",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/images/leadercosmetique.png?height=300&width=400",
     description: "Gestion complète des réseaux sociaux avec création de contenu.",
-    client: "Social Brand",
+    client: "Leaders Cosmétique",
     year: "2024",
     services: ["Social Media", "Content Creation", "Community Management", "Influencers"],
-    externalLink: "https://example.com/project8",
+    externalLink: "https://leadercosmetique.com/",
   },
 ]
 
