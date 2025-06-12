@@ -28,6 +28,7 @@ const projects = [
     client: "TechStart Inc.",
     year: "2024",
     services: ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
+    externalLink: "https://example.com/project1",
   },
   {
     id: 2,
@@ -39,17 +40,24 @@ const projects = [
     client: "Fashion Brand",
     year: "2024",
     services: ["SEO", "Social Media", "Google Ads", "Analytics"],
+    externalLink: "https://example.com/project2",
   },
   {
     id: 3,
-    title: "Site e-commerce moderne",
+    title: "Waco Cargo",
     category: "Web",
-    image: "/placeholder.svg?height=300&width=400",
+    image: "/images/wacocargo.png?height=300&width=400",
+    images: [
+      "/images/wacocargo1.png?height=600&width=800",
+      "/images/wacocargo2.png?height=600&width=800",
+      "/images/wacocargo3.png?height=600&width=800",
+    ],
     description:
-      "Développement d'une plateforme e-commerce responsive avec système de paiement intégré.",
-    client: "Boutique Online",
+      "Développement d'une plateforme d'importation et exportation de colis.",
+    client: "Waco cargo",
     year: "2024",
-    services: ["Développement", "UX/UI", "E-commerce", "Responsive"],
+    services: ["Développement", "UX/UI", "Responsive"],
+    externalLink: "https://wacocargo.com",
   },
   {
     id: 4,
@@ -66,16 +74,23 @@ const projects = [
     client: "Le Gourmet",
     year: "2023",
     services: ["Branding", "Menu Design", "Signalétique", "Packaging"],
+    externalLink: "https://example.com/project4",
   },
   {
     id: 5,
-    title: "Application mobile innovante",
+    title: "GÉNÉRALE DES PROS",
     category: "Web",
-    image: "/placeholder.svg?height=300&width=400",
-    description: "Conception et développement d'une application mobile native.",
-    client: "MobileApp Co.",
+    image: "/images/generaldespros.png?height=300&width=400",
+    images: [
+      "/images/generaldespros1.png?height=600&width=800",
+      "/images/generaldespros2.png?height=600&width=800",
+    ],
+    description:
+      "GÉNÉRALE DES PROS SARL est une entreprise de transit expérimentée et fiable, basée au Cameroun. Nous nous spécialisons dans une gamme complète de services de transit et de logistique pour faciliter vos importations et exportations.",
+    client: "GÉNÉRALE DES PROS SARL",
     year: "2024",
-    services: ["Mobile App", "UI/UX", "Native Development", "API"],
+    services: ["Développement", "UX/UI", "Responsive"],
+    externalLink: "https://generaledespros.com",
   },
   {
     id: 6,
@@ -86,6 +101,7 @@ const projects = [
     client: "Business Corp",
     year: "2024",
     services: ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
+    externalLink: "https://example.com/project6",
   },
   {
     id: 7,
@@ -104,6 +120,7 @@ const projects = [
     client: "Beauty Luxe",
     year: "2023",
     services: ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
+    externalLink: "https://example.com/project7",
   },
   {
     id: 8,
@@ -114,6 +131,7 @@ const projects = [
     client: "Social Brand",
     year: "2024",
     services: ["Social Media", "Content Creation", "Community Management", "Influencers"],
+    externalLink: "https://example.com/project8",
   },
 ]
 
@@ -166,7 +184,7 @@ const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: bool
                   <ImageGallery
                     images={project.images}
                     alt={project.title}
-                    className="w-full h-full"
+                    className="w-full h-full max-h-[600px]"
                     showThumbnails={true}
                     allowZoom={true}
                     allowDownload={false}
@@ -221,14 +239,17 @@ const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: bool
                     </div>
                   </div>
                   <div className="pt-4 space-y-4">
-                    {project.category !== "Design" && (
-                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                        <Button className="w-full bg-rose-vif hover:bg-rouge-framboise smooth-transition text-sm md:text-base py-2">
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Voir le projet complet
-                        </Button>
-                      </motion.div>
-                    )}
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <a
+                        href={project.externalLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full inline-flex items-center justify-center bg-rose-vif hover:bg-rouge-framboise smooth-transition text-sm md:text-base py-2 rounded-md font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-vif"
+                      >
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Voir le projet complet
+                      </a>
+                    </motion.div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button
                         onClick={handleContactClick}
@@ -261,7 +282,6 @@ export default function PortfolioSection() {
   const hasMoreProjects = filteredProjects.length > 6
 
   useEffect(() => {
-    // Précharger les images des projets affichés
     const imagesToPreload = displayedProjects.map((project) => project.image)
     preloadImages(imagesToPreload, 3)
   }, [displayedProjects])
@@ -269,7 +289,6 @@ export default function PortfolioSection() {
   const openModal = (project: any) => {
     setSelectedProject(project)
     setIsModalOpen(true)
-    // Précharger les images de la galerie si elles existent
     if (project.images) {
       preloadImages(project.images, 2)
     }
@@ -321,7 +340,8 @@ export default function PortfolioSection() {
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="data-[state=active]:bg-rose-vif data-[state=active]:text-white smooth-transition text-sm py-2 applicare la police ici">
+                  className="data-[state=active]:bg-rose-vif data-[state=active]:text-white smooth-transition text-sm py-2"
+                >
                   {category}
                 </TabsTrigger>
               ))}

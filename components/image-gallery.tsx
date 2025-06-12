@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronLeft, ChevronRight, X, ZoomIn, Download } from "lucide-react"
 import OptimizedImage from "./optimized-image"
@@ -39,7 +39,7 @@ export default function ImageGallery({
           const img = new Image()
           img.src = images[i]
           img.onload = () => {
-            setLoadedImages((prev) => new Set(prev).add(i))
+            setLoadedImages((prev) => new Set([...Array.from(prev), i]))
           }
         }
       })
@@ -99,24 +99,24 @@ export default function ImageGallery({
   )
 
   // Ajouter les event listeners pour le clavier
-  useState(() => {
+  useEffect(() => {
     document.addEventListener("keydown", handleKeyDown)
     return () => document.removeEventListener("keydown", handleKeyDown)
-  })
+  }, [handleKeyDown])
 
   if (!images || images.length === 0) {
     return (
-      <div className={`bg-muted rounded-lg flex items-center justify-center p-8 ${className}`}>
+      <div className="bg-muted rounded-lg flex items-center justify-center p-4">
         <p className="text-muted-foreground">Aucune image disponible</p>
       </div>
     )
   }
 
   return (
-    <div className={`relative ${className}`}>
-      {/* Image principale */}
-      <div className="relative aspect-[4/3] bg-muted rounded-lg overflow-hidden">
-        <AnimatePresence mode="wait">
+    <div className={`relative w-full ${className}`}>
+      {/* Main image */}
+      <div className="relative w-full h-full">
+        <AnimatePresence>
           <motion.div
             key={currentIndex}
             initial={{ opacity: 0, x: 20 }}
@@ -126,50 +126,50 @@ export default function ImageGallery({
             className="relative w-full h-full"
           >
             <OptimizedImage
-              src={images[currentIndex]}
+              src={images[currentIndex] || "/placeholder.svg"}
               alt={`${alt} - Image ${currentIndex + 1}`}
               fill
-              className="object-cover"
+              className="object-contain w-full h-full"
               priority={currentIndex === 0}
-              quality={85}
+              quality={75}
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 80vw, 60vw"
             />
           </motion.div>
         </AnimatePresence>
 
-        {/* Contrôles de navigation */}
+        {/* Navigation controls */}
         {images.length > 1 && (
           <>
             <motion.button
               onClick={prevImage}
-              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full smooth-transition focus-ring"
+              className="absolute left-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/60 text-white rounded-full transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Image précédente"
+              aria-label="Previous image"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-6 w-6" />
             </motion.button>
             <motion.button
               onClick={nextImage}
-              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full smooth-transition focus-ring"
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-black/50 hover:bg-black/60 text-white rounded-full transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Image suivante"
+              aria-label="Next image"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-6 w-6" />
             </motion.button>
           </>
         )}
 
-        {/* Contrôles d'action */}
+        {/* Action controls */}
         <div className="absolute top-2 right-2 flex gap-2">
           {allowZoom && (
             <motion.button
               onClick={toggleZoom}
-              className="p-2 bg-black/50 hover:bg-black/70 text-white rounded-full smooth-transition focus-ring"
+              className="p-2 bg-black/70 hover:bg-black/80 text-white rounded-full transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Zoomer"
+              aria-label="Zoom"
             >
               <ZoomIn className="h-4 w-4" />
             </motion.button>
@@ -177,19 +177,19 @@ export default function ImageGallery({
           {allowDownload && (
             <motion.button
               onClick={downloadImage}
-              className="p-2 bg-black/50 hover:bg-black/70 text-white rounded-full smooth-transition focus-ring"
+              className="p-2 bg-black/70 hover:bg-black/80 text-white rounded-full transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              aria-label="Télécharger"
+              aria-label="Download"
             >
               <Download className="h-4 w-4" />
             </motion.button>
           )}
         </div>
 
-        {/* Indicateur de progression */}
+        {/* Progress indicator */}
         {images.length > 1 && (
-          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/50 text-white text-sm rounded-full">
+          <div className="absolute bottom-2 left-1/2 -translate-x-1/2 px-3 py-1 bg-black/60 text-white text-sm rounded-full">
             {currentIndex + 1} / {images.length}
           </div>
         )}
@@ -202,8 +202,8 @@ export default function ImageGallery({
             <motion.button
               key={index}
               onClick={() => goToImage(index)}
-              className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 smooth-transition focus-ring ${
-                index === currentIndex ? "border-rose-vif shadow-lg" : "border-transparent hover:border-rose-vif/50"
+              className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500 ${
+                index === currentIndex ? "border-rose-500 shadow-lg" : "border-transparent hover:border-rose-500/50"
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -216,13 +216,13 @@ export default function ImageGallery({
                 quality={60}
                 sizes="64px"
               />
-              {index === currentIndex && <div className="absolute inset-0 bg-rose-vif/20" />}
+              {index === currentIndex && <div className="absolute inset-0 bg-rose-500/20" />}
             </motion.button>
           ))}
         </div>
       )}
 
-      {/* Modal de zoom */}
+      {/* Zoom modal */}
       <AnimatePresence>
         {isZoomed && (
           <motion.div
@@ -230,11 +230,12 @@ export default function ImageGallery({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
             onClick={toggleZoom}
           >
             <motion.button
               onClick={toggleZoom}
-              className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 text-white rounded-full smooth-transition focus-ring"
+              className="absolute top-4 right-4 p-2 bg-white/20 hover:bg-white/30 text-white rounded-full transition duration-200 focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
             >
@@ -253,7 +254,7 @@ export default function ImageGallery({
                 width={1200}
                 height={900}
                 className="object-contain max-w-full max-h-full"
-                quality={95}
+                quality={100}
                 priority
               />
             </motion.div>
