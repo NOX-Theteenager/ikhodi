@@ -25,12 +25,9 @@ export default function EditPortfolioPage() {
   const id = params?.id as string;
 
   const [projectData, setProjectData] = useState<ProjectState | null>(null);
-
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const [galleryImageFiles, setGalleryImageFiles] = useState<FileList | null>(null);
-
   const [servicesString, setServicesString] = useState('');
-
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState('');
@@ -48,7 +45,7 @@ export default function EditPortfolioPage() {
           return res.json();
         })
         .then((data: ProjectState) => {
-          if(!data || typeof data.id === 'undefined') { // Check if data is null or not a project object
+          if(!data || typeof data.id === 'undefined') {
             throw new Error("Fetched data is not a valid project.");
           }
           setProjectData(data);
@@ -95,7 +92,6 @@ export default function EditPortfolioPage() {
     }
     setIsSubmitting(true);
     setMessage('');
-
     const formData = new FormData();
     formData.append('title', projectData.title);
     formData.append('category', projectData.category);
@@ -108,24 +104,18 @@ export default function EditPortfolioPage() {
     if (mainImageFile) {
       formData.append('image', mainImageFile);
     }
-    // To allow clearing an image, send an empty image_url if mainImageFile is null AND projectData.image was cleared
-    // This requires an explicit action from user to clear the projectData.image field in UI, not implemented here.
-    // If mainImageFile is null, API will preserve old image unless image_url="" is sent.
 
     if (galleryImageFiles && galleryImageFiles.length > 0) {
       for (let i = 0; i < galleryImageFiles.length; i++) {
         formData.append('images', galleryImageFiles[i]);
       }
     }
-    // Similar logic for clearing gallery - requires explicit empty images_urls or specific signal.
-    // If galleryImageFiles is null/empty, API will preserve old gallery unless images_urls=[] is sent.
 
     try {
       const response = await fetch(`/api/portfolio/${id}`, {
         method: 'PUT',
         body: formData,
       });
-
       if (response.ok) {
         setMessage('Project updated successfully! Redirecting...');
         setTimeout(() => router.push('/admin/portfolio'), 2000);
@@ -141,96 +131,100 @@ export default function EditPortfolioPage() {
     }
   };
 
-  if (isLoading) return <div style={{ padding: '2rem', textAlign: 'center' }}>Loading project data...</div>;
-  if (error) return <div style={{ padding: '2rem', color: 'red', textAlign: 'center' }}>Error: {error} <br/> <Link href="/admin/portfolio" style={{color: '#007bff'}}>Back to Portfolio List</Link></div>;
-  if (!projectData) return <div style={{ padding: '2rem', textAlign: 'center' }}>Project not found or could not be loaded. <br/> <Link href="/admin/portfolio" style={{color: '#007bff'}}>Back to Portfolio List</Link></div>;
+  if (isLoading) return <div className="text-center p-10 text-gray-700 dark:text-gray-300">Loading project data...</div>;
+  if (error) return <div className="text-center p-10 text-red-600 dark:text-red-400">Error: {error} <br/> <Link href="/admin/portfolio" className="text-violet-600 hover:underline dark:text-violet-400 dark:hover:underline">Back to Portfolio List</Link></div>;
+  if (!projectData) return <div className="text-center p-10 text-gray-700 dark:text-gray-300">Project not found or could not be loaded. <br/> <Link href="/admin/portfolio" className="text-violet-600 hover:underline dark:text-violet-400 dark:hover:underline">Back to Portfolio List</Link></div>;
 
   return (
-    <div style={{ maxWidth: '700px', margin: '2rem auto', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px', fontFamily: 'Arial, sans-serif' }}>
-      <h1 style={{textAlign: 'center', color: '#333', marginBottom: '1.5rem'}}>Edit Portfolio Item (ID: {id})</h1>
-      <form onSubmit={handleSubmit}>
+    <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 md:p-8">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+        Edit Portfolio Item <span className="text-base font-normal text-gray-500 dark:text-gray-400">(ID: {id})</span>
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
 
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="title" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Title:</label>
-          <input type="text" id="title" name="title" value={projectData.title} onChange={handleTextChange} required style={{width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+          <input type="text" id="title" name="title" value={projectData.title} onChange={handleTextChange} required
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="category" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Category:</label>
-            <select id="category" name="category" value={projectData.category} onChange={handleTextChange} style={{ width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }}>
+        <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+            <select id="category" name="category" value={projectData.category} onChange={handleTextChange}
+                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm">
                 {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
             </select>
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="description" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Description:</label>
-            <textarea id="description" name="description" value={projectData.description} onChange={handleTextChange} required style={{width: '100%', minHeight: '100px', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+            <textarea id="description" name="description" value={projectData.description} onChange={handleTextChange} required
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" style={{minHeight: '100px'}}/>
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="client" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Client:</label>
-            <input type="text" id="client" name="client" value={projectData.client} onChange={handleTextChange} style={{width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+            <label htmlFor="client" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
+            <input type="text" id="client" name="client" value={projectData.client} onChange={handleTextChange}
+                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="year" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Year:</label>
-            <input type="text" id="year" name="year" value={projectData.year} onChange={handleTextChange} style={{width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+            <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year</label>
+            <input type="text" id="year" name="year" value={projectData.year} onChange={handleTextChange}
+                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-        <div style={{ marginBottom: '1rem' }}>
-            <label htmlFor="services" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>Services (comma-separated):</label>
-            <input type="text" id="services" name="services" value={servicesString} onChange={handleServicesChange} style={{width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+            <label htmlFor="services" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Services (comma-separated)</label>
+            <input type="text" id="services" name="services" value={servicesString} onChange={handleServicesChange}
+                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-        <div style={{ marginBottom: '1.5rem' }}> {/* Increased bottom margin */}
-            <label htmlFor="externalLink" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: 'bold' }}>External Link:</label>
-            <input type="url" id="externalLink" name="externalLink" value={projectData.externalLink} onChange={handleTextChange} placeholder="https://example.com" style={{width: '100%', padding: '0.5rem', border: '1px solid #ddd', borderRadius: '4px' }} />
+        <div>
+            <label htmlFor="externalLink" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">External Link</label>
+            <input type="url" id="externalLink" name="externalLink" value={projectData.externalLink} onChange={handleTextChange} placeholder="https://example.com"
+                   className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-
-        <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #eee', borderRadius: '4px' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#555' }}>Current Main Image:</label>
-          {projectData.image ?
-            <img src={projectData.image} alt="Current main image" style={{ maxWidth: '200px', height: 'auto', display: 'block', marginBottom: '0.75rem', borderRadius: '4px', border: '1px solid #ddd' }} />
-            : <p style={{color: '#777', fontStyle: 'italic'}}>No main image currently set.</p>}
-          <label htmlFor="mainImageFile" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: '500' }}>Upload New Main Image (replaces current):</label>
-          <input type="file" id="mainImageFile" name="image" accept="image/*" onChange={handleMainImageChange} style={{ width: '100%', padding: '0.5rem' }}/>
+        <div className="space-y-2 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Main Image</label>
+          {projectData.image ? (
+            <img src={projectData.image} alt="Current main image" className="max-w-xs max-h-48 rounded-md shadow-sm object-contain border border-gray-200 dark:border-gray-700 mb-2" />
+          ) : <p className="text-sm text-gray-500 dark:text-gray-400 italic">No main image.</p>}
+          <label htmlFor="mainImageFile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 pt-2">Upload New Main Image (replaces current)</label>
+          <input type="file" id="mainImageFile" name="image" accept="image/*" onChange={handleMainImageChange}
+                 className="block w-full text-sm text-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none p-2.5"/>
         </div>
 
-        <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid #eee', borderRadius: '4px' }}>
-          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold', color: '#555' }}>Current Gallery Images:</label>
+        <div className="space-y-2 p-4 border border-gray-200 dark:border-gray-700 rounded-md">
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Current Gallery Images</label>
           {projectData.images && projectData.images.length > 0 ? (
-            <div style={{display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '0.75rem'}}>
+            <div className="flex flex-wrap gap-3 items-start mb-2">
               {projectData.images.map((imgUrl, index) => (
-                <img key={index} src={imgUrl} alt={`Gallery image ${index + 1}`} style={{ width: '100px', height: '100px', objectFit: 'cover', borderRadius: '4px', border: '1px solid #ddd' }} />
+                <img key={index} src={imgUrl} alt={`Gallery image ${index + 1}`} className="w-24 h-24 rounded-md shadow-sm object-cover border border-gray-200 dark:border-gray-700" />
               ))}
             </div>
-          ) : <p style={{color: '#777', fontStyle: 'italic'}}>No gallery images currently set.</p>}
-          <label htmlFor="galleryImageFiles" style={{ display: 'block', marginBottom: '0.3rem', fontWeight: '500' }}>Upload New Gallery Images (replaces current gallery):</label>
-          <input type="file" id="galleryImageFiles" name="images" multiple accept="image/*" onChange={handleGalleryImagesChange} style={{ width: '100%', padding: '0.5rem' }}/>
+          ) : <p className="text-sm text-gray-500 dark:text-gray-400 italic">No gallery images.</p>}
+          <label htmlFor="galleryImageFiles" className="block text-sm font-medium text-gray-700 dark:text-gray-300 pt-2">Upload New Gallery Images (replaces current gallery)</label>
+          <input type="file" id="galleryImageFiles" name="images" multiple accept="image/*" onChange={handleGalleryImagesChange}
+                 className="block w-full text-sm text-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none p-2.5"/>
         </div>
 
-        <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '2rem'}}>
-            <button
-                type="submit"
-                disabled={isSubmitting}
-                style={{
-                    padding: '0.75rem 1.5rem',
-                    backgroundColor: isSubmitting ? '#ccc' : '#007bff',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    fontSize: '1rem',
-                    fontWeight: 'bold'
-                }}
-            >
+        <div className="flex items-center justify-between pt-4">
+            <button type="submit" disabled={isSubmitting}
+                    className="inline-flex justify-center py-2.5 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:bg-gray-400 dark:disabled:bg-gray-500">
               {isSubmitting ? "Updating..." : "Update Project"}
             </button>
-            <Link href="/admin/portfolio" style={{color: '#dc3545', textDecoration: 'none', fontWeight: 'bold'}}>Cancel</Link>
+            <Link href="/admin/portfolio" className="text-sm font-medium text-violet-600 hover:text-violet-800 dark:text-violet-400 dark:hover:text-violet-500 hover:underline">
+              Cancel
+            </Link>
         </div>
       </form>
-      {message && <p style={{ marginTop: '1rem', textAlign: 'center', color: message.startsWith('Failed') || message.startsWith('An error') ? 'red' : 'green', fontWeight: 'bold' }}>{message}</p>}
+      {message && (
+         <p className={`mt-4 text-sm p-3 rounded-md ${message.startsWith('Failed') || message.startsWith('An error') ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'}`}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }

@@ -3,31 +3,23 @@
 import { useState, FormEvent, ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 
-const categories = ["Design", "Marketing", "Web"]; // Should match AddPortfolioPage
+const categories = ["Design", "Marketing", "Web"];
 
 export default function AddPortfolioPage() {
-  // Text field states
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState(categories[0]);
   const [description, setDescription] = useState('');
   const [client, setClient] = useState('');
   const [year, setYear] = useState('');
-  const [services, setServices] = useState(''); // Comma-separated string
+  const [services, setServices] = useState('');
   const [externalLink, setExternalLink] = useState('');
-
-  // File states
   const [mainImageFile, setMainImageFile] = useState<File | null>(null);
   const [galleryImageFiles, setGalleryImageFiles] = useState<FileList | null>(null);
-
-  // Fallback URL states (optional, if you want to keep URL input as a secondary option)
   const [mainImageUrl, setMainImageUrl] = useState('');
   const [galleryImageUrls, setGalleryImageUrls] = useState('');
-
-
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState('');
   const router = useRouter();
-
 
   const handleMainImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     setMainImageFile(e.target.files?.[0] || null);
@@ -41,19 +33,18 @@ export default function AddPortfolioPage() {
     event.preventDefault();
     setSubmitting(true);
     setMessage('');
-
     const formData = new FormData();
     formData.append('title', title);
     formData.append('category', category);
     formData.append('description', description);
     formData.append('client', client);
     formData.append('year', year);
-    formData.append('services', services); // Send as comma-separated string, API will parse
+    formData.append('services', services);
     formData.append('externalLink', externalLink);
 
     if (mainImageFile) {
       formData.append('image', mainImageFile);
-    } else if (mainImageUrl.trim() !== '') { // Fallback if file not selected but URL provided
+    } else if (mainImageUrl.trim() !== '') {
       formData.append('image_url', mainImageUrl.trim());
     }
 
@@ -61,26 +52,22 @@ export default function AddPortfolioPage() {
       for (let i = 0; i < galleryImageFiles.length; i++) {
         formData.append('images', galleryImageFiles[i]);
       }
-    } else if (galleryImageUrls.trim() !== '') { // Fallback
+    } else if (galleryImageUrls.trim() !== '') {
         formData.append('images_urls', galleryImageUrls.trim());
     }
 
     try {
       const response = await fetch('/api/portfolio', {
         method: 'POST',
-        body: formData, // No Content-Type header needed for FormData
+        body: formData,
       });
-
       if (response.ok) {
         setMessage('Project added successfully! Redirecting...');
-        // Reset form states
         setTitle(''); setCategory(categories[0]); setDescription(''); setClient(''); setYear(''); setServices(''); setExternalLink('');
         setMainImageFile(null); setGalleryImageFiles(null);
         setMainImageUrl(''); setGalleryImageUrls('');
-
         const form = event.target as HTMLFormElement;
-        form.reset(); // Resets native form elements, including file inputs.
-
+        form.reset();
         setTimeout(() => router.push('/admin/portfolio'), 2000);
       } else {
         const errorData = await response.json();
@@ -95,89 +82,89 @@ export default function AddPortfolioPage() {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '2rem auto', padding: '2rem', border: '1px solid #ccc', borderRadius: '8px' }}>
-      <h1>Add New Portfolio Item</h1>
-      <form onSubmit={handleSubmit}>
-        {/* Title */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="title" style={{ display: 'block', marginBottom: '0.5rem' }}>Title</label>
-          <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required style={{ width: '100%', padding: '0.5rem' }} />
+    <div className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-6 md:p-8">
+      <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-6">
+        Add New Portfolio Item
+      </h1>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Title</label>
+          <input type="text" id="title" value={title} onChange={(e) => setTitle(e.target.value)} required
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
-        {/* Category */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="category" style={{ display: 'block', marginBottom: '0.5rem' }}>Category</label>
-          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)} style={{ width: '100%', padding: '0.5rem' }}>
+
+        <div>
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Category</label>
+          <select id="category" value={category} onChange={(e) => setCategory(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm">
             {categories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
           </select>
         </div>
-        {/* Description */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="description" style={{ display: 'block', marginBottom: '0.5rem' }}>Description</label>
-          <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required style={{ width: '100%', padding: '0.5rem', minHeight: '100px' }} />
-        </div>
-        {/* Client */}
-         <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="client" style={{ display: 'block', marginBottom: '0.5rem' }}>Client</label>
-          <input type="text" id="client" value={client} onChange={(e) => setClient(e.target.value)} style={{ width: '100%', padding: '0.5rem' }} />
-        </div>
-        {/* Year */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="year" style={{ display: 'block', marginBottom: '0.5rem' }}>Year</label>
-          <input type="text" id="year" value={year} onChange={(e) => setYear(e.target.value)} style={{ width: '100%', padding: '0.5rem' }} />
-        </div>
-        {/* Services */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="services" style={{ display: 'block', marginBottom: '0.5rem' }}>Services (comma-separated)</label>
-          <input type="text" id="services" value={services} onChange={(e) => setServices(e.target.value)} placeholder="e.g., Web Design, Development" style={{ width: '100%', padding: '0.5rem' }} />
-        </div>
-        {/* External Link */}
-         <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="externalLink" style={{ display: 'block', marginBottom: '0.5rem' }}>External Link (optional)</label>
-          <input type="url" id="externalLink" value={externalLink} onChange={(e) => setExternalLink(e.target.value)} placeholder="https://example.com" style={{ width: '100%', padding: '0.5rem' }} />
+
+        <div>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Description</label>
+          <textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} required
+                    className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" style={{ minHeight: '100px' }}/>
         </div>
 
-
-        {/* Main Image File Input */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="imageFile" style={{ display: 'block', marginBottom: '0.5rem' }}>Main Image (File)</label>
-          <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={handleMainImageChange} style={{ width: '100%', padding: '0.5rem' }} />
-        </div>
-        {/* Fallback Main Image URL Input (optional) */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="mainImageUrl" style={{ display: 'block', marginBottom: '0.5rem' }}>Or Main Image URL (Fallback)</label>
-          <input type="text" id="mainImageUrl" value={mainImageUrl} onChange={(e) => setMainImageUrl(e.target.value)} placeholder="e.g., /images/project.png" style={{ width: '100%', padding: '0.5rem' }} />
+        <div>
+          <label htmlFor="client" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Client</label>
+          <input type="text" id="client" value={client} onChange={(e) => setClient(e.target.value)}
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-
-        {/* Gallery Images File Input */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="galleryImageFiles" style={{ display: 'block', marginBottom: '0.5rem' }}>Gallery Images (Files)</label>
-          <input type="file" id="galleryImageFiles" name="galleryImageFiles" multiple accept="image/*" onChange={handleGalleryImagesChange} style={{ width: '100%', padding: '0.5rem' }} />
-        </div>
-        {/* Fallback Gallery Image URLs Input (optional) */}
-        <div style={{ marginBottom: '1rem' }}>
-          <label htmlFor="galleryImageUrls" style={{ display: 'block', marginBottom: '0.5rem' }}>Or Gallery Image URLs (Fallback, comma-separated)</label>
-          <input type="text" id="galleryImageUrls" value={galleryImageUrls} onChange={(e) => setGalleryImageUrls(e.target.value)} placeholder="e.g., /img1.png, /img2.png" style={{ width: '100%', padding: '0.5rem' }} />
+        <div>
+          <label htmlFor="year" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Year</label>
+          <input type="text" id="year" value={year} onChange={(e) => setYear(e.target.value)}
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
         </div>
 
-        <button
-            type="submit"
-            disabled={submitting}
-            style={{
-              width: '100%',
-              padding: '0.75rem 1.5rem',
-              backgroundColor: submitting ? '#b0b0b0' : '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '1rem'
-            }}
-          >
-            {submitting ? 'Submitting...' : 'Add Project'}
+        <div>
+          <label htmlFor="services" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Services (comma-separated)</label>
+          <input type="text" id="services" value={services} onChange={(e) => setServices(e.target.value)} placeholder="e.g., Web Design, Development"
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
+        </div>
+
+        <div>
+          <label htmlFor="externalLink" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">External Link (optional)</label>
+          <input type="url" id="externalLink" value={externalLink} onChange={(e) => setExternalLink(e.target.value)} placeholder="https://example.com"
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
+        </div>
+
+        <div>
+          <label htmlFor="imageFile" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Main Image (File)</label>
+          <input type="file" id="imageFile" name="imageFile" accept="image/*" onChange={handleMainImageChange}
+                 className="block w-full text-sm text-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none p-2.5"/>
+        </div>
+
+        <div>
+          <label htmlFor="mainImageUrl" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Or Main Image URL (Fallback)</label>
+          <input type="text" id="mainImageUrl" value={mainImageUrl} onChange={(e) => setMainImageUrl(e.target.value)} placeholder="e.g., /images/project.png"
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
+        </div>
+
+        <div>
+          <label htmlFor="galleryImageFiles" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Gallery Images (Files)</label>
+          <input type="file" id="galleryImageFiles" name="galleryImageFiles" multiple accept="image/*" onChange={handleGalleryImagesChange}
+                 className="block w-full text-sm text-gray-900 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 focus:outline-none p-2.5"/>
+        </div>
+
+        <div>
+          <label htmlFor="galleryImageUrls" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Or Gallery Image URLs (Fallback, comma-separated)</label>
+          <input type="text" id="galleryImageUrls" value={galleryImageUrls} onChange={(e) => setGalleryImageUrls(e.target.value)} placeholder="e.g., /img1.png, /img2.png"
+                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-violet-500 focus:border-violet-500 sm:text-sm" />
+        </div>
+
+        <button type="submit" disabled={submitting}
+                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-violet-500 disabled:bg-gray-400 dark:disabled:bg-gray-500">
+          {submitting ? 'Submitting...' : 'Add Project'}
         </button>
       </form>
-      {message && <p style={{ marginTop: '1rem', color: message.startsWith('Failed') ? 'red' : 'green' }}>{message}</p>}
+      {message && (
+        <p className={`mt-4 text-sm p-3 rounded-md ${message.startsWith('Failed') || message.startsWith('An error') ? 'bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'}`}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }

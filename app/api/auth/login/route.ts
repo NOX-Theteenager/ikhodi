@@ -5,22 +5,27 @@ export async function POST(request: NextRequest) {
   try {
     const { password } = await request.json();
 
-    // IMPORTANT: Store and access this password securely, e.g., via environment variables.
-    // For this example, we'll use an environment variable or a default.
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "defaultsecurepassword123";
+    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-    if (!process.env.ADMIN_PASSWORD) {
-        console.warn("WARNING: ADMIN_PASSWORD environment variable not set. Using default password for login.");
+    if (!ADMIN_PASSWORD) {
+      console.error('CRITICAL: ADMIN_PASSWORD environment variable is not set. Admin login is disabled.');
+      return NextResponse.json({ message: 'Authentication system not configured on server.' }, { status: 500 });
+    }
+
+    // Ensure ADMIN_PASSWORD is not an empty string after trimming.
+    if (ADMIN_PASSWORD.trim() === '') {
+        console.error('CRITICAL: ADMIN_PASSWORD environment variable is set but effectively empty. Admin login is disabled.');
+        return NextResponse.json({ message: 'Authentication system not properly configured on server.' }, { status: 500 });
     }
 
     if (password === ADMIN_PASSWORD) {
       // Set a cookie to signify authentication
-      cookies().set('admin-auth-token', 'true', { // Value can be anything, presence is key for middleware
-        httpOnly: true, // Not accessible via client-side JavaScript
-        secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-        path: '/admin', // Scope cookie to admin paths
-        sameSite: 'lax', // Mitigates CSRF
-        maxAge: 60 * 60 * 8, // Expires in 8 hours
+      cookies().set('admin-auth-token', 'true', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        path: '/admin',
+        sameSite: 'lax',
+        maxAge: 60 * 60 * 8, // 8 hours
       });
       return NextResponse.json({ success: true }, { status: 200 });
     } else {
@@ -28,6 +33,10 @@ export async function POST(request: NextRequest) {
     }
   } catch (error) {
     console.error('Login API error:', error);
-    return NextResponse.json({ message: 'An internal server error occurred' }, { status: 500 });
+    // Check if the error is due to invalid JSON in the request body
+    if (error instanceof SyntaxError && (error as any).body === true) { // Next.js might throw SyntaxError with body:true
+        return NextResponse.json({ message: 'Invalid JSON format in request body' }, { status: 400 });
+    }
+    return NextResponse.json({ message: 'An internal server error occurred during login' }, { status: 500 });
   }
 }
