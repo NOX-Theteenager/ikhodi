@@ -11,129 +11,129 @@ import { preloadImages } from "@/lib/image-utils"
 
 const categories = ["Tous", "Design", "Marketing", "Web"]
 
-const projects = [
-  {
-    id: 1,
-    title: "Alpha Travel",
-    category: "Web",
-    image: "/images/alphatravel.png?height=300&width=400",
-    images: [
-      "/images/alphatravel.png?height=600&width=800",
-      "/images/alphatravel1.png?height=600&width=800",
-      // "/placeholder.svg?height=600&width=800",
-      // "/placeholder.svg?height=600&width=800",
-    ],
-    description:
-      "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
-    client: "TechStart Inc.",
-    year: "2024",
-    services: ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
-    externalLink: "https://alfatraveltour.net/",
-  },
-  {
-    id: 2,
-    title: "Campagne digitale multi-canal",
-    category: "Marketing",
-    image: "/placeholder.svg?height=300&width=400",
-    description:
-      "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante.",
-    client: "Fashion Brand",
-    year: "2024",
-    services: ["SEO", "Social Media", "Google Ads", "Analytics"],
+// const projects = [
+//   {
+//     id: 1,
+//     title: "Alpha Travel",
+//     category: "Web",
+//     image: "/images/alphatravel.png?height=300&width=400",
+//     images: [
+//       "/images/alphatravel.png?height=600&width=800",
+//       "/images/alphatravel1.png?height=600&width=800",
+//       // "/placeholder.svg?height=600&width=800",
+//       // "/placeholder.svg?height=600&width=800",
+//     ],
+//     description:
+//       "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
+//     client: "TechStart Inc.",
+//     year: "2024",
+//     services: ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
+//     externalLink: "https://alfatraveltour.net/",
+//   },
+//   {
+//     id: 2,
+//     title: "Campagne digitale multi-canal",
+//     category: "Marketing",
+//     image: "/placeholder.svg?height=300&width=400",
+//     description:
+//       "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante.",
+//     client: "Fashion Brand",
+//     year: "2024",
+//     services: ["SEO", "Social Media", "Google Ads", "Analytics"],
     
-  },
-  {
-    id: 3,
-    title: "Waco Cargo",
-    category: "Web",
-    image: "/images/wacocargo.png?height=300&width=400",
-    images: [
-      "/images/wacocargo.png?height=600&width=800",
-      // "/images/wacocargo2.png?height=600&width=800",
-      // "/images/wacocargo3.png?height=600&width=800",
-    ],
-    description:
-      "Développement d'une plateforme d'importation et exportation de colis.",
-    client: "Waco cargo",
-    year: "2024",
-    services: ["Développement", "UX/UI", "Responsive"],
-    externalLink: "https://wacocargo.com",
-  },
-  {
-    id: 4,
-    title: "Identité visuelle restaurant",
-    category: "Design",
-    image: "/placeholder.svg?height=300&width=400",
-    images: [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-    ],
-    description:
-      "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique.",
-    client: "Le Gourmet",
-    year: "2023",
-    services: ["Branding", "Menu Design", "Signalétique", "Packaging"],
-    externalLink: "https://example.com/project4",
-  },
-  {
-    id: 5,
-    title: "GÉNÉRALE DES PROS",
-    category: "Web",
-    image: "/images/generaldespros.png?height=300&width=400",
-    images: [
-      "/images/generaldespros1.png?height=600&width=800",
-      "/images/generaldespros2.png?height=600&width=800",
-    ],
-    description:
-      "GÉNÉRALE DES PROS SARL est une entreprise de transit expérimentée et fiable, basée au Cameroun. Nous nous spécialisons dans une gamme complète de services de transit et de logistique pour faciliter vos importations et exportations.",
-    client: "GÉNÉRALE DES PROS SARL",
-    year: "2024",
-    services: ["Développement", "UX/UI", "Responsive"],
-    externalLink: "https://generaledespros.com",
-  },
-  {
-    id: 6,
-    title: "Stratégie SEO avancée",
-    category: "Marketing",
-    image: "/placeholder.svg?height=300&width=400",
-    description: "Optimisation complète du référencement naturel avec audit technique.",
-    client: "Business Corp",
-    year: "2024",
-    services: ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
-    externalLink: "https://example.com/project6",
-  },
-  {
-    id: 7,
-    title: "Packaging produit premium",
-    category: "Design",
-    image: "/placeholder.svg?height=300&width=400",
-    images: [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-    ],
-    description:
-      "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques.",
-    client: "Beauty Luxe",
-    year: "2023",
-    services: ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
-    externalLink: "https://example.com/project7",
-  },
-  {
-    id: 8,
-    title: "Leaders Cosmétique",
-    category: "Marketing",
-    image: "/images/leadercosmetique.png?height=300&width=400",
-    description: "Gestion complète des réseaux sociaux avec création de contenu.",
-    client: "Leaders Cosmétique",
-    year: "2024",
-    services: ["Social Media", "Content Creation", "Community Management", "Influencers"],
-    externalLink: "https://leadercosmetique.com/",
-  },
-]
+//   },
+//   {
+//     id: 3,
+//     title: "Waco Cargo",
+//     category: "Web",
+//     image: "/images/wacocargo.png?height=300&width=400",
+//     images: [
+//       "/images/wacocargo.png?height=600&width=800",
+//       // "/images/wacocargo2.png?height=600&width=800",
+//       // "/images/wacocargo3.png?height=600&width=800",
+//     ],
+//     description:
+//       "Développement d'une plateforme d'importation et exportation de colis.",
+//     client: "Waco cargo",
+//     year: "2024",
+//     services: ["Développement", "UX/UI", "Responsive"],
+//     externalLink: "https://wacocargo.com",
+//   },
+//   {
+//     id: 4,
+//     title: "Identité visuelle restaurant",
+//     category: "Design",
+//     image: "/placeholder.svg?height=300&width=400",
+//     images: [
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//     ],
+//     description:
+//       "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique.",
+//     client: "Le Gourmet",
+//     year: "2023",
+//     services: ["Branding", "Menu Design", "Signalétique", "Packaging"],
+//     externalLink: "https://example.com/project4",
+//   },
+//   {
+//     id: 5,
+//     title: "GÉNÉRALE DES PROS",
+//     category: "Web",
+//     image: "/images/generaldespros.png?height=300&width=400",
+//     images: [
+//       "/images/generaldespros1.png?height=600&width=800",
+//       "/images/generaldespros2.png?height=600&width=800",
+//     ],
+//     description:
+//       "GÉNÉRALE DES PROS SARL est une entreprise de transit expérimentée et fiable, basée au Cameroun. Nous nous spécialisons dans une gamme complète de services de transit et de logistique pour faciliter vos importations et exportations.",
+//     client: "GÉNÉRALE DES PROS SARL",
+//     year: "2024",
+//     services: ["Développement", "UX/UI", "Responsive"],
+//     externalLink: "https://generaledespros.com",
+//   },
+//   {
+//     id: 6,
+//     title: "Stratégie SEO avancée",
+//     category: "Marketing",
+//     image: "/placeholder.svg?height=300&width=400",
+//     description: "Optimisation complète du référencement naturel avec audit technique.",
+//     client: "Business Corp",
+//     year: "2024",
+//     services: ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
+//     externalLink: "https://example.com/project6",
+//   },
+//   {
+//     id: 7,
+//     title: "Packaging produit premium",
+//     category: "Design",
+//     image: "/placeholder.svg?height=300&width=400",
+//     images: [
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//       "/placeholder.svg?height=600&width=800",
+//     ],
+//     description:
+//       "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques.",
+//     client: "Beauty Luxe",
+//     year: "2023",
+//     services: ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
+//     externalLink: "https://example.com/project7",
+//   },
+//   {
+//     id: 8,
+//     title: "Leaders Cosmétique",
+//     category: "Marketing",
+//     image: "/images/leadercosmetique.png?height=300&width=400",
+//     description: "Gestion complète des réseaux sociaux avec création de contenu.",
+//     client: "Leaders Cosmétique",
+//     year: "2024",
+//     services: ["Social Media", "Content Creation", "Community Management", "Influencers"],
+//     externalLink: "https://leadercosmetique.com/",
+//   },
+// ]
 
 const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: boolean; onClose: () => void }) => {
   const handleContactClick = () => {
@@ -270,26 +270,54 @@ const ProjectModal = ({ project, isOpen, onClose }: { project: any; isOpen: bool
 }
 
 export default function PortfolioSection() {
+  const [projectsData, setProjectsData] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const [activeTab, setActiveTab] = useState("Tous")
   const [showAll, setShowAll] = useState(false)
   const [selectedProject, setSelectedProject] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('/api/portfolio');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setProjectsData(data);
+        setError(null);
+      } catch (e: any) {
+        console.error("Failed to fetch projects:", e);
+        setError(e.message || "Failed to load projects.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
   const filteredProjects =
-    activeTab === "Tous" ? projects : projects.filter((project) => project.category === activeTab)
+    activeTab === "Tous" ? projectsData : projectsData.filter((project) => project.category === activeTab)
 
   const displayedProjects = showAll ? filteredProjects : filteredProjects.slice(0, 6)
   const hasMoreProjects = filteredProjects.length > 6
 
   useEffect(() => {
-    const imagesToPreload = displayedProjects.map((project) => project.image)
-    preloadImages(imagesToPreload, 3)
-  }, [displayedProjects])
+    if (displayedProjects.length > 0) {
+      const imagesToPreload = displayedProjects.map((project) => project.image).filter(Boolean);
+      preloadImages(imagesToPreload, 3);
+    }
+  }, [displayedProjects]);
 
   const openModal = (project: any) => {
     setSelectedProject(project)
     setIsModalOpen(true)
-    if (project.images) {
+    if (project.images && project.images.length > 0) {
       preloadImages(project.images, 2)
     }
   }
@@ -297,6 +325,18 @@ export default function PortfolioSection() {
   const closeModal = () => {
     setIsModalOpen(false)
     setSelectedProject(null)
+  }
+
+  if (isLoading) {
+    return <section id="portfolio" className="py-12 md:py-20"><div className="container text-center">Loading portfolio...</div></section>;
+  }
+
+  if (error) {
+    return <section id="portfolio" className="py-12 md:py-20"><div className="container text-center text-red-500">Error: {error}</div></section>;
+  }
+
+  if (!projectsData || projectsData.length === 0) {
+    return <section id="portfolio" className="py-12 md:py-20"><div className="container text-center">No projects to display.</div></section>;
   }
 
   return (
