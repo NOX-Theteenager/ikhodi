@@ -116,12 +116,16 @@ export default function AdminPortfolioListPage() {
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.category}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.client || 'N/A'}</td>
                 <td style={{ border: '1px solid #ddd', padding: '8px' }}>{project.year || 'N/A'}</td>
-                <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {/* Placeholder for Edit button */}
-                  Edit |
+                <td style={{ border: '1px solid #ddd', padding: '8px', whiteSpace: 'nowrap' }}>
+                  <Link
+                    href={`/admin/edit-portfolio/${project.id}`}
+                    style={{ color: '#007bff', textDecoration: 'none', marginRight: '10px' }}
+                  >
+                    Edit
+                  </Link>
                   <button
                     onClick={() => handleDelete(project.id)}
-                    style={{ color: 'red', background: 'none', border: 'none', padding: '0 0 0 5px', cursor: 'pointer', textDecoration: 'underline' }}
+                    style={{ color: 'red', background: 'none', border: 'none', padding: '0', cursor: 'pointer', textDecoration: 'underline' }}
                   >
                     Delete
                   </button>
