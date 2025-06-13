@@ -1,11 +1,16 @@
 import { NextResponse } from "next/server";
 import fs from "fs/promises";
 import path from "path";
+import { Buffer } from "buffer"; // Ensure Buffer is imported
 
-// Helper function to get the file path
+// Helper function to get the portfolio.json file path
 const getPortfolioFilePath = () => {
   return path.join(process.cwd(), "data", "portfolio.json");
 };
+
+const UPLOAD_DIR = path.join(process.cwd(), 'public', 'uploads', 'portfolio');
+const PUBLIC_PATH_PREFIX = '/uploads/portfolio/';
+
 
 export async function GET(request: Request) {
   try {
@@ -36,72 +41,118 @@ export async function GET(request: Request) {
 
 export async function POST(request: Request) {
   try {
-    const newProjectData = await request.json();
+    // Ensure upload directory exists
+    await fs.mkdir(UPLOAD_DIR, { recursive: true });
 
-    // Basic Validation
-    const { title, category, description, image } = newProjectData;
-    if (!title || !category || !description || !image) {
+    const formData = await request.formData();
+
+    // Extract text fields
+    const title = formData.get('title') as string | null;
+    const category = formData.get('category') as string | null;
+    const description = formData.get('description') as string | null;
+    const client = formData.get('client') as string | null;
+    const year = formData.get('year') as string | null;
+    const servicesString = formData.get('services') as string | null;
+    const externalLink = formData.get('externalLink') as string | null;
+
+    // Basic Validation for text fields
+    if (!title || !category || !description) {
       return NextResponse.json(
-        { error: "Missing required fields (title, category, description, image)." },
+        { error: "Missing required text fields (title, category, description)." },
         { status: 400 }
       );
     }
 
+    const newProjectData: any = {
+      id: Date.now().toString(), // Unique ID
+      title,
+      category,
+      description,
+      client: client || "",
+      year: year || "",
+      services: servicesString ? servicesString.split(",").map(s => s.trim()).filter(s => s) : [],
+      externalLink: externalLink || "",
+      image: "", // Placeholder for main image path
+      images: [], // Placeholder for gallery image paths
+    };
+
+    // Handle Main Image Upload
+    const mainImageFile = formData.get('image') as File | null;
+    if (!mainImageFile || typeof mainImageFile.arrayBuffer !== 'function') {
+        // If 'image' is a string (URL) and not a file, it means no new file was uploaded.
+        // This case might need to be handled if you allow updating projects without changing the image,
+        // or if you still want to allow direct URL input.
+        // For this subtask, we'll assume 'image' from formData should be a file for new projects.
+        // If it's a string, it could be an old URL if the form still submits it.
+        // We will prioritize file upload. If no file, then an error or allow string URL.
+        // For now, let's make main image file mandatory for new project.
+         return NextResponse.json({ error: "Main image file is required." }, { status: 400 });
+    }
+
+    // Check if mainImageFile is actually a file with content
+    if (mainImageFile && mainImageFile.size > 0) {
+        const mainImageOriginalName = mainImageFile.name;
+        const mainImageUniqueFilename = `${Date.now()}-${mainImageOriginalName.replace(/\s+/g, '_')}`;
+        const mainImageSavePath = path.join(UPLOAD_DIR, mainImageUniqueFilename);
+        const mainImageBuffer = Buffer.from(await mainImageFile.arrayBuffer());
+        await fs.writeFile(mainImageSavePath, mainImageBuffer);
+        newProjectData.image = `${PUBLIC_PATH_PREFIX}${mainImageUniqueFilename}`;
+    } else {
+        // This else block might be redundant due to the check above, but good for clarity
+        return NextResponse.json({ error: "Main image file is required and cannot be empty." }, { status: 400 });
+    }
+
+
+    // Handle Gallery Images Upload
+    const galleryImageFiles = formData.getAll('images') as File[];
+    const galleryImagePaths: string[] = [];
+
+    for (const galleryFile of galleryImageFiles) {
+      if (galleryFile && typeof galleryFile.arrayBuffer === 'function' && galleryFile.size > 0) {
+        const galleryOriginalName = galleryFile.name;
+        // Sanitize filename slightly (replace spaces)
+        const galleryUniqueFilename = `${Date.now()}-${galleryOriginalName.replace(/\s+/g, '_')}`;
+        const gallerySavePath = path.join(UPLOAD_DIR, galleryUniqueFilename);
+        const galleryBuffer = Buffer.from(await galleryFile.arrayBuffer());
+        await fs.writeFile(gallerySavePath, galleryBuffer);
+        galleryImagePaths.push(`${PUBLIC_PATH_PREFIX}${galleryUniqueFilename}`);
+      }
+    }
+    newProjectData.images = galleryImagePaths;
+
+
+    // Read existing projects, add new one, and write back
     const filePath = getPortfolioFilePath();
     let projects = [];
-
     try {
       const fileContent = await fs.readFile(filePath, "utf-8");
       projects = JSON.parse(fileContent);
       if (!Array.isArray(projects)) {
-        // If the file content is not an array, initialize with an empty array or handle as error
-        console.warn("Portfolio data file does not contain a valid JSON array. Initializing with new project.");
+        console.warn("Portfolio data file does not contain a valid JSON array. Initializing.");
         projects = [];
       }
     } catch (error: any) {
       if (error.code === "ENOENT") {
-        // File doesn't exist, so we'll create it with the new project
         console.log("Portfolio data file not found. A new file will be created.");
-      } else if (error instanceof SyntaxError) {
-         // If JSON is malformed, it's a problem. For POST, we might decide to overwrite or return error.
-         // For now, let's log and start fresh if it's badly malformed, or try to append if it's just empty/not an array.
-        console.error("Error parsing portfolio data file (POST):", error);
-        return NextResponse.json(
-            { error: "Error reading existing portfolio data. Check server logs." },
-            { status: 500 }
-        );
       } else {
-        // Other read errors
-        throw error; // Re-throw to be caught by the outer catch block
+        // For other errors (like malformed JSON), throw to be caught by outer try-catch
+        throw new Error(`Error reading portfolio data file: ${error.message}`);
       }
     }
 
-    // Generate a new unique id (using timestamp for simplicity)
-    const newProjectWithId = {
-      ...newProjectData,
-      id: Date.now(), // Simple unique ID generation
-    };
-
-    // Add the new project to the array
-    projects.push(newProjectWithId);
-
-    // Write the updated projects array back to data/portfolio.json
+    projects.push(newProjectData);
     await fs.writeFile(filePath, JSON.stringify(projects, null, 2), "utf-8");
 
-    // Return the newly added project with a 201 status code
-    return NextResponse.json(newProjectWithId, { status: 201 });
+    return NextResponse.json(newProjectData, { status: 201 });
 
   } catch (error: any) {
     console.error("Error processing POST request for portfolio:", error);
-    if (error instanceof SyntaxError) {
-      // Error parsing request.json()
-      return NextResponse.json(
-        { error: "Invalid JSON payload in request." },
-        { status: 400 }
-      );
+    // Check for specific error types if needed, e.g., file system errors
+    if (error.message.startsWith("Error reading portfolio data file")) {
+         return NextResponse.json({ error: "Failed to read existing portfolio data. " + error.message }, { status: 500 });
     }
     return NextResponse.json(
-      { error: "An unexpected error occurred while adding the project." },
+      { error: `An unexpected error occurred while adding the project: ${error.message}` },
       { status: 500 }
     );
   }
