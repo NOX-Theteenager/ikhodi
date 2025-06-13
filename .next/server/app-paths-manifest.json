@@ -1,5 +1,9 @@
 {
   "/not-found": "app/not-found.js",
+  "/admin/portfolio/page": "app/admin/portfolio/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
+  "/api/portfolio/route": "app/api/portfolio/route.js",
+  "/admin/edit-portfolio/[id]/page": "app/admin/edit-portfolio/[id]/page.js",
   "/page": "app/page.js",
-  "/favicon.ico/route": "app/favicon.ico/route.js"
+  "/admin/add-portfolio/page": "app/admin/add-portfolio/page.js"
 }
