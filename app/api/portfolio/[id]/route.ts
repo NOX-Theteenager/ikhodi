@@ -112,59 +112,70 @@ export async function PUT(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ message: `Project with ID ${projectId} not found.` }, { status: 404 });
     }
 
-    const existingProject = projects[projectIndex];
-    const updatedProjectData: Project = { ...existingProject };
+    // Use a mutable copy for updates
+    const projectToUpdate: Project = JSON.parse(JSON.stringify(projects[projectIndex]));
 
     // Process text fields
     for (const field of ['title', 'category', 'description', 'client', 'year', 'externalLink']) {
       if (formData.has(field)) {
-        updatedProjectData[field] = formData.get(field) as string;
+        projectToUpdate[field] = formData.get(field) as string;
       }
     }
     if (formData.has('services')) {
       const servicesString = formData.get('services') as string;
-      updatedProjectData.services = servicesString ? servicesString.split(",").map(s => s.trim()).filter(s => s) : [];
+      projectToUpdate.services = servicesString ? servicesString.split(",").map(s => s.trim()).filter(s => s) : [];
     }
 
     // Handle Main Image Update
     const newMainImageFile = formData.get('image') as File | null;
     if (newMainImageFile && newMainImageFile.size > 0 && typeof newMainImageFile.arrayBuffer === 'function') {
-      await deleteLocalFile(existingProject.image);
+      await deleteLocalFile(projectToUpdate.image);
 
       const mainImageOriginalName = newMainImageFile.name;
       const mainImageUniqueFilename = `${Date.now()}-${mainImageOriginalName.replace(/\s+/g, '_')}`;
       const mainImageSavePath = path.join(UPLOAD_DIR, mainImageUniqueFilename);
       const mainImageBuffer = Buffer.from(await newMainImageFile.arrayBuffer());
       await fs.writeFile(mainImageSavePath, mainImageBuffer);
-      updatedProjectData.image = `${PUBLIC_PATH_PREFIX}${mainImageUniqueFilename}`;
+      projectToUpdate.image = `${PUBLIC_PATH_PREFIX}${mainImageUniqueFilename}`;
     }
 
-    // Handle Gallery Images Update
+    // Granular Gallery Image Updates
+    // 1. Process Deletions
+    const galleryImagesToDeleteRaw = formData.get('galleryImagesToDelete') as string | null;
+    if (galleryImagesToDeleteRaw) {
+      const galleryImagesToDeletePaths = galleryImagesToDeleteRaw.split(',').map(p => p.trim()).filter(p => p);
+      if (galleryImagesToDeletePaths.length > 0 && projectToUpdate.images) {
+        for (const pathToDelete of galleryImagesToDeletePaths) {
+          await deleteLocalFile(pathToDelete);
+        }
+        projectToUpdate.images = projectToUpdate.images.filter(
+          (imgPath: string) => !galleryImagesToDeletePaths.includes(imgPath)
+        );
+      }
+    }
+
+    // 2. Process New Uploads (Append)
     const newGalleryImageFiles = formData.getAll('images') as File[];
-    const hasNewGalleryUploads = newGalleryImageFiles.some(file => file && file.size > 0 && typeof file.arrayBuffer === 'function');
-
-    if (hasNewGalleryUploads) {
-      if (existingProject.images && Array.isArray(existingProject.images)) {
-        for (const oldImagePath of existingProject.images) {
-          await deleteLocalFile(oldImagePath);
-        }
+    const uploadedGalleryImagePaths: string[] = [];
+    for (const galleryFile of newGalleryImageFiles) {
+      if (galleryFile && galleryFile.size > 0 && typeof galleryFile.arrayBuffer === 'function') {
+        const galleryOriginalName = galleryFile.name;
+        const galleryUniqueFilename = `${Date.now()}-${galleryOriginalName.replace(/\s+/g, '_')}`;
+        const gallerySavePath = path.join(UPLOAD_DIR, galleryUniqueFilename);
+        const galleryBuffer = Buffer.from(await galleryFile.arrayBuffer());
+        await fs.writeFile(gallerySavePath, galleryBuffer);
+        uploadedGalleryImagePaths.push(`${PUBLIC_PATH_PREFIX}${galleryUniqueFilename}`);
       }
-
-      const newGalleryImagePaths: string[] = [];
-      for (const galleryFile of newGalleryImageFiles) {
-        if (galleryFile && galleryFile.size > 0 && typeof galleryFile.arrayBuffer === 'function') {
-          const galleryOriginalName = galleryFile.name;
-          const galleryUniqueFilename = `${Date.now()}-${galleryOriginalName.replace(/\s+/g, '_')}`;
-          const gallerySavePath = path.join(UPLOAD_DIR, galleryUniqueFilename);
-          const galleryBuffer = Buffer.from(await galleryFile.arrayBuffer());
-          await fs.writeFile(gallerySavePath, galleryBuffer);
-          newGalleryImagePaths.push(`${PUBLIC_PATH_PREFIX}${galleryUniqueFilename}`);
-        }
-      }
-      updatedProjectData.images = newGalleryImagePaths;
     }
 
-    projects[projectIndex] = { ...updatedProjectData, id: projectId };
+    if (uploadedGalleryImagePaths.length > 0) {
+      if (!projectToUpdate.images || !Array.isArray(projectToUpdate.images)) {
+        projectToUpdate.images = []; // Initialize if it was null/undefined or not an array
+      }
+      projectToUpdate.images.push(...uploadedGalleryImagePaths);
+    }
+
+    projects[projectIndex] = { ...projectToUpdate, id: projectId }; // Ensure ID is not changed
     await fs.writeFile(filePath, JSON.stringify(projects, null, 2), 'utf-8');
 
     return NextResponse.json(projects[projectIndex]);

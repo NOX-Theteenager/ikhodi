@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, FormEvent, useEffect, ChangeEvent } from "react";
-import { Eye, Edit3, Trash2, PlusCircle, List, XCircle, Save } from "lucide-react"; // Added XCircle, Save
+import { Eye, Edit3, Trash2, PlusCircle, List, XCircle, Save, Search, ImageOff } from "lucide-react"; // Added Search, ImageOff
 
 const projectCategories = ["Design", "Marketing", "Web", "Autre"];
 
@@ -40,15 +40,18 @@ export default function AddPortfolioItemPage() {
   const [currentMainImage, setCurrentMainImage] = useState<File | null>(null);
   const [currentGalleryImages, setCurrentGalleryImages] = useState<FileList | null>(null);
   const [currentExternalLink, setCurrentExternalLink] = useState("");
+  const [galleryImagesMarkedForDeletion, setGalleryImagesMarkedForDeletion] = useState<string[]>([]);
+
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<SubmitStatus | null>(null);
   const [deletingId, setDeletingId] = useState<string | number | null>(null);
 
-
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoadingProjects, setIsLoadingProjects] = useState(true);
   const [loadProjectsError, setLoadProjectsError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
+
 
   const fetchProjects = async () => {
     setIsLoadingProjects(true);
@@ -72,7 +75,7 @@ export default function AddPortfolioItemPage() {
     if (isAuthenticated) {
       fetchProjects();
     } else {
-      setProjects([]); // Clear projects if not authenticated
+      setProjects([]);
     }
   }, [isAuthenticated]);
 
@@ -110,6 +113,7 @@ export default function AddPortfolioItemPage() {
     setCurrentGalleryImages(null);
     setCurrentExternalLink("");
     setEditingProject(null);
+    setGalleryImagesMarkedForDeletion([]);
     setSubmitStatus(null);
   };
 
@@ -122,10 +126,17 @@ export default function AddPortfolioItemPage() {
     setCurrentYear(project.year || new Date().getFullYear().toString());
     setCurrentServices(project.services?.join(", ") || "");
     setCurrentExternalLink(project.externalLink || "");
-    setCurrentMainImage(null); // Reset file input
-    setCurrentGalleryImages(null); // Reset file input
+    setCurrentMainImage(null);
+    setCurrentGalleryImages(null);
+    setGalleryImagesMarkedForDeletion([]);
     setSubmitStatus(null);
-    window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const toggleGalleryImageForDeletion = (imgPath: string) => {
+    setGalleryImagesMarkedForDeletion(prev =>
+      prev.includes(imgPath) ? prev.filter(p => p !== imgPath) : [...prev, imgPath]
+    );
   };
 
   const handleProjectSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -150,6 +161,10 @@ export default function AddPortfolioItemPage() {
       for (let i = 0; i < currentGalleryImages.length; i++) {
         formData.append('images', currentGalleryImages[i]);
       }
+    }
+
+    if (editingProject && galleryImagesMarkedForDeletion.length > 0) {
+        formData.append('galleryImagesToDelete', galleryImagesMarkedForDeletion.join(','));
     }
 
     let apiUrl = '/api/portfolio';
@@ -207,6 +222,12 @@ export default function AddPortfolioItemPage() {
     }
   };
 
+  const filteredProjects = projects.filter(project =>
+    (project.title && project.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.category && project.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.client && project.client.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (project.year && project.year.includes(searchTerm))
+  );
 
   const inputClass = "mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-rose-vif focus:border-rose-vif sm:text-sm";
   const labelClass = "block text-sm font-medium text-gray-700 dark:text-gray-300";
@@ -256,6 +277,7 @@ export default function AddPortfolioItemPage() {
             )}
           </div>
           <form onSubmit={handleProjectSubmit} className="space-y-6">
+            {/* Text fields ... (no changes here from previous step) */}
             <div>
               <label htmlFor="title" className={labelClass}>Titre du Projet <span className="text-red-500">*</span></label>
               <input type="text" name="title" id="title" value={currentTitle} onChange={(e) => setCurrentTitle(e.target.value)} required className={inputClass} />
@@ -276,30 +298,43 @@ export default function AddPortfolioItemPage() {
               <label htmlFor="description" className={labelClass}>Description <span className="text-red-500">*</span></label>
               <textarea name="description" id="description" value={currentDescription} onChange={(e) => setCurrentDescription(e.target.value)} required rows={4} className={inputClass}></textarea>
             </div>
+            {/* Main Image Input */}
             <div>
-              <label htmlFor="imageFile" className={labelClass}>Image Principale {editingProject ? "(Optionnel pour modifier)" : <span className="text-red-500">*</span>}</label>
-              {editingProject?.image && !currentMainImage && (
+              <label htmlFor="imageFile" className={labelClass}>Image Principale {editingProject && !editingProject.image ? <span className="text-red-500">*</span> : (editingProject ? "(Optionnel pour modifier)" : <span className="text-red-500">*</span>)}</label>
+              {editingProject?.image && (
                 <div className="mt-2 mb-2">
                   <p className="text-xs text-gray-500 dark:text-gray-400">Image actuelle:</p>
-                  <img src={editingProject.image} alt="Image principale actuelle" className="h-20 w-auto rounded-md shadow"/>
+                  {currentMainImage ? <span className="text-xs text-blue-500 italic">Nouveau fichier sélectionné ci-dessous.</span> : <img src={editingProject.image} alt="Image principale actuelle" className="h-20 w-auto rounded-md shadow"/> }
                 </div>
               )}
               <input type="file" name="imageFile" id="imageFile" accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentMainImage(e.target.files?.[0] || null)} className={`${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-gray-700 dark:file:text-violet-300 dark:hover:file:bg-gray-600`} />
             </div>
+            {/* Gallery Images Input and Management */}
             <div>
-              <label htmlFor="galleryFiles" className={labelClass}>Images de la Galerie (Optionnel)</label>
+              <label htmlFor="galleryFiles" className={labelClass}>{editingProject ? "Ajouter de nouvelles images à la galerie" : "Images de la Galerie (Optionnel)"}</label>
               {editingProject?.images && editingProject.images.length > 0 && (
                 <div className="mt-2 mb-2">
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Images de galerie actuelles:</p>
-                  <div className="flex space-x-2 overflow-x-auto py-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">Images de galerie actuelles (cliquer pour marquer/démarquer pour suppression):</p>
+                  <div className="flex flex-wrap gap-2 py-2">
                     {editingProject.images.map((imgUrl, idx) => (
-                      <img key={idx} src={imgUrl} alt={`Galerie image ${idx + 1}`} className="h-20 w-auto rounded-md shadow"/>
+                      <div key={idx} className="relative">
+                        <img src={imgUrl} alt={`Galerie image ${idx + 1}`}
+                             className={`h-24 w-auto rounded-md shadow cursor-pointer transition-opacity ${galleryImagesMarkedForDeletion.includes(imgUrl) ? 'opacity-40 border-2 border-red-500' : 'opacity-100'}`}
+                             onClick={() => toggleGalleryImageForDeletion(imgUrl)}
+                        />
+                        {galleryImagesMarkedForDeletion.includes(imgUrl) && (
+                           <div className="absolute top-1 right-1 p-0.5 bg-red-500 rounded-full text-white">
+                             <XCircle size={16} />
+                           </div>
+                        )}
+                      </div>
                     ))}
                   </div>
                 </div>
               )}
               <input type="file" name="galleryFiles" id="galleryFiles" multiple accept="image/*" onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentGalleryImages(e.target.files)} className={`${inputClass} file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 dark:file:bg-gray-700 dark:file:text-violet-300 dark:hover:file:bg-gray-600`} />
             </div>
+            {/* Other text fields ... (no changes here from previous step) */}
             <div>
               <label htmlFor="client" className={labelClass}>Client (Optionnel)</label>
               <input type="text" name="client" id="client" value={currentClient} onChange={(e) => setCurrentClient(e.target.value)} className={inputClass} />
@@ -320,7 +355,7 @@ export default function AddPortfolioItemPage() {
               </div>
             )}
 
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-3 pt-2">
               <button type="submit" disabled={isSubmitting}
                 className="flex items-center justify-center py-2.5 px-5 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-rose-vif hover:bg-rouge-framboise focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-vif disabled:opacity-50 dark:focus:ring-offset-gray-800">
                 {editingProject ? <Save className="mr-2 h-5 w-5"/> : <PlusCircle className="mr-2 h-5 w-5"/>}
@@ -337,31 +372,50 @@ export default function AddPortfolioItemPage() {
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-lg shadow-xl">
-            <h2 className="text-2xl font-semibold text-violet-fonce dark:text-rose-pale mb-6 flex items-center"><List className="mr-2 h-6 w-6"/> Liste des Projets Existants</h2>
+            <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+              <h2 className="text-2xl font-semibold text-violet-fonce dark:text-rose-pale flex items-center whitespace-nowrap">
+                  <List className="mr-2 h-6 w-6"/> Liste des Projets
+              </h2>
+              <div className="relative w-full sm:w-auto">
+                  <input
+                      type="text"
+                      placeholder="Rechercher par titre, catégorie, client..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className={`${inputClass} pl-10 w-full sm:w-64 md:w-80`}
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500"/>
+              </div>
+            </div>
             {isLoadingProjects && <p className="text-center py-4 text-gray-600 dark:text-gray-300">Chargement des projets...</p>}
             {loadProjectsError && <p className="text-center py-4 text-red-500 dark:text-red-400">Erreur: {loadProjectsError}</p>}
+            {!isLoadingProjects && !loadProjectsError && projects.length > 0 && filteredProjects.length === 0 && (
+                 <p className="text-center py-4 text-gray-600 dark:text-gray-300">Aucun projet ne correspond à votre recherche "{searchTerm}".</p>
+            )}
             {!isLoadingProjects && !loadProjectsError && projects.length === 0 && (
                 <p className="text-center py-4 text-gray-600 dark:text-gray-300">Aucun projet trouvé.</p>
             )}
-            {!isLoadingProjects && !loadProjectsError && projects.length > 0 && (
+            {!isLoadingProjects && !loadProjectsError && filteredProjects.length > 0 && (
                 <div className="space-y-4">
-                {projects.map(project => (
+                {filteredProjects.map(project => (
                     <div key={project.id} className="flex flex-col md:flex-row items-start md:items-center justify-between p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:shadow-md transition-shadow">
-                        <div className="flex items-center mb-3 md:mb-0 flex-grow">
-                            {project.image && (<img src={project.image} alt={project.title} className="w-16 h-16 object-cover rounded-md mr-4 shadow flex-shrink-0"/>)}
-                            <div className="flex-grow">
-                                <h3 className="text-lg font-semibold text-violet-fonce dark:text-rose-pale">{project.title}</h3>
+                        <div className="flex items-center mb-3 md:mb-0 flex-grow min-w-0"> {/* Added min-w-0 for flexbox truncation */}
+                            {project.image ?
+                                <img src={project.image} alt={project.title} className="w-16 h-16 object-cover rounded-md mr-4 shadow flex-shrink-0"/>
+                                : <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-md mr-4 shadow flex-shrink-0 flex items-center justify-center"><ImageOff className="h-8 w-8 text-gray-400 dark:text-gray-500"/></div>}
+                            <div className="flex-grow overflow-hidden"> {/* Added overflow-hidden */}
+                                <h3 className="text-lg font-semibold text-violet-fonce dark:text-rose-pale truncate" title={project.title}>{project.title}</h3>
                                 <p className="text-sm text-gray-500 dark:text-gray-400">{project.category} - {project.year}</p>
-                                <p className="text-xs text-gray-400 dark:text-gray-500">ID: {project.id}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 truncate">ID: {project.id}</p>
                             </div>
                         </div>
-                        <div className="flex space-x-2 flex-shrink-0">
+                        <div className="flex space-x-2 flex-shrink-0 mt-3 md:mt-0">
                             <button onClick={() => handleEditClick(project)} disabled={deletingId === project.id || isSubmitting}
-                                className="p-2 text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 disabled:opacity-50 transition-colors">
+                                className="p-2 text-sm text-green-600 hover:text-green-800 dark:text-green-400 dark:hover:text-green-300 disabled:opacity-50 transition-colors" title="Modifier">
                                 <Edit3 className="h-5 w-5"/>
                             </button>
                             <button onClick={() => handleDeleteClick(project.id)} disabled={deletingId === project.id || isSubmitting}
-                                className="p-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 disabled:opacity-50 transition-colors">
+                                className="p-2 text-sm text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-300 disabled:opacity-50 transition-colors" title="Supprimer">
                                 {deletingId === project.id ? <span className="animate-spin inline-block w-5 h-5 border-2 border-current border-t-transparent rounded-full" role="status" aria-label="suppression..."></span> : <Trash2 className="h-5 w-5"/>}
                             </button>
                         </div>
