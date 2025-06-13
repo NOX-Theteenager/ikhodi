@@ -1,20 +1,22 @@
 [
   {
-    "id": 1,
-    "title": "Refonte de marque complète",
+    "id": "1",
+    "title": "Alpha travel tour",
     "category": "Design",
-    "image": "/placeholder.svg?height=300&width=400",
+    "image": "/uploads/portfolio/1749811871407-alphatravel.png",
     "images": [
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800",
-      "/placeholder.svg?height=600&width=800"
+      "/uploads/portfolio/1749811871409-alphatravel.png"
     ],
     "description": "Création d'une identité visuelle moderne et impactante pour une startup technologique.",
-    "client": "TechStart Inc.",
+    "client": "Alpha travel",
     "year": "2024",
-    "services": ["Logo Design", "Charte Graphique", "Supports Print", "Guidelines"],
-    "externalLink": "https://example.com/project1"
+    "services": [
+      "Logo Design",
+      "Charte Graphique",
+      "Supports Print",
+      "Guidelines"
+    ],
+    "externalLink": "https://alfatraveltour.net/"
   },
   {
     "id": 2,
@@ -24,23 +26,28 @@
     "description": "Stratégie marketing complète incluant SEO, réseaux sociaux et publicité payante.",
     "client": "Fashion Brand",
     "year": "2024",
-    "services": ["SEO", "Social Media", "Google Ads", "Analytics"],
+    "services": [
+      "SEO",
+      "Social Media",
+      "Google Ads",
+      "Analytics"
+    ],
     "externalLink": "https://example.com/project2"
   },
   {
-    "id": 3,
+    "id": "3",
     "title": "Waco Cargo",
     "category": "Web",
     "image": "/images/wacocargo.png?height=300&width=400",
-    "images": [
-      "/images/wacocargo1.png?height=600&width=800",
-      "/images/wacocargo2.png?height=600&width=800",
-      "/images/wacocargo3.png?height=600&width=800"
-    ],
+    "images": [],
     "description": "Développement d'une plateforme d'importation et exportation de colis.",
     "client": "Waco cargo",
     "year": "2024",
-    "services": ["Développement", "UX/UI", "Responsive"],
+    "services": [
+      "Développement",
+      "UX/UI",
+      "Responsive"
+    ],
     "externalLink": "https://wacocargo.com"
   },
   {
@@ -56,7 +63,12 @@
     "description": "Création d'une identité visuelle chaleureuse et authentique pour un restaurant gastronomique.",
     "client": "Le Gourmet",
     "year": "2023",
-    "services": ["Branding", "Menu Design", "Signalétique", "Packaging"],
+    "services": [
+      "Branding",
+      "Menu Design",
+      "Signalétique",
+      "Packaging"
+    ],
     "externalLink": "https://example.com/project4"
   },
   {
@@ -71,7 +83,11 @@
     "description": "GÉNÉRALE DES PROS SARL est une entreprise de transit expérimentée et fiable, basée au Cameroun. Nous nous spécialisons dans une gamme complète de services de transit et de logistique pour faciliter vos importations et exportations.",
     "client": "GÉNÉRALE DES PROS SARL",
     "year": "2024",
-    "services": ["Développement", "UX/UI", "Responsive"],
+    "services": [
+      "Développement",
+      "UX/UI",
+      "Responsive"
+    ],
     "externalLink": "https://generaledespros.com"
   },
   {
@@ -82,7 +98,12 @@
     "description": "Optimisation complète du référencement naturel avec audit technique.",
     "client": "Business Corp",
     "year": "2024",
-    "services": ["SEO Technique", "Content Strategy", "Link Building", "Analytics"],
+    "services": [
+      "SEO Technique",
+      "Content Strategy",
+      "Link Building",
+      "Analytics"
+    ],
     "externalLink": "https://example.com/project6"
   },
   {
@@ -100,7 +121,12 @@
     "description": "Conception d'un packaging élégant et durable pour une gamme de produits cosmétiques.",
     "client": "Beauty Luxe",
     "year": "2023",
-    "services": ["Packaging Design", "Eco-conception", "Print", "3D Modeling"],
+    "services": [
+      "Packaging Design",
+      "Eco-conception",
+      "Print",
+      "3D Modeling"
+    ],
     "externalLink": "https://example.com/project7"
   },
   {
@@ -111,7 +137,12 @@
     "description": "Gestion complète des réseaux sociaux avec création de contenu.",
     "client": "Social Brand",
     "year": "2024",
-    "services": ["Social Media", "Content Creation", "Community Management", "Influencers"],
+    "services": [
+      "Social Media",
+      "Content Creation",
+      "Community Management",
+      "Influencers"
+    ],
     "externalLink": "https://example.com/project8"
   }
 ]
