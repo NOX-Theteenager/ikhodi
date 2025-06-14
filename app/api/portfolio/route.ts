@@ -1,46 +1,69 @@
 import { NextResponse, NextRequest } from 'next/server';
-import fs from 'fs/promises'; // Ensured fs.mkdir is available
-import path, { join } from 'path'; // Ensured join is available
-import { writeFile } from 'fs/promises'; // Specifically for writeFile
+import fs from 'fs/promises';
+import path, { join } from 'path';
+import { writeFile, mkdir } from 'fs/promises'; // Specifically for writeFile and mkdir
+import { getConnection } from '../../../lib/db'; // Import MySQL connection utility
 
-const filePath = path.join(process.cwd(), 'data', 'portfolio.json');
+// Define the structure of a Portfolio Project
+interface PortfolioProject {
+  id?: number; // Optional because it's auto-incremented on insert
+  title: string;
+  category: string;
+  image?: string | null;
+  images?: string[]; // Stored as JSON string in DB
+  description?: string | null;
+  client?: string | null;
+  year?: string | null;
+  services?: string[]; // Stored as JSON string in DB
+  externalLink?: string | null;
+}
 
-async function readPortfolioData() {
-  try {
-    const jsonData = await fs.readFile(filePath, 'utf-8');
-    // Handle empty file case, return empty array
-    if (jsonData.trim() === '') {
-      return [];
-    }
-    return JSON.parse(jsonData);
-  } catch (error) {
-    // If the file doesn't exist, return an empty array
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
-      return [];
-    }
-    console.error('Error reading portfolio data:', error);
-    throw error; // Re-throw to be caught by the handler
-  }
+// Helper function to ensure correct data types for database insertion
+function prepareProjectForDb(project: any): PortfolioProject {
+  return {
+    title: project.title,
+    category: project.category,
+    image: project.image || null,
+    images: project.images ? JSON.stringify(project.images) : null, // Convert array to JSON string
+    description: project.description || null,
+    client: project.client || null,
+    year: project.year || null,
+    services: project.services ? JSON.stringify(project.services) : null, // Convert array to JSON string
+    externalLink: project.externalLink || null,
+  };
+}
+
+// Helper function to parse JSON fields from DB result
+function parseProjectFromDb(project: any): PortfolioProject {
+  return {
+    ...project,
+    images: project.images ? JSON.parse(project.images) : [],
+    services: project.services ? JSON.parse(project.services) : [],
+  };
 }
 
 export async function GET() {
+  let connection;
   try {
-    const data = await readPortfolioData();
-    // Ensure data is an array, even if file was empty or non-existent initially
-    return NextResponse.json(Array.isArray(data) ? data : []);
+    connection = await getConnection();
+    const [rows] = await connection.execute('SELECT * FROM portfolio ORDER BY id DESC');
+    const projects = (rows as any[]).map(parseProjectFromDb);
+    return NextResponse.json(projects);
   } catch (error) {
-    console.error('Failed to read portfolio data for GET:', error);
+    console.error('Failed to read portfolio data from DB:', error);
     return NextResponse.json({ message: 'Error reading portfolio data' }, { status: 500 });
+  } finally {
+    if (connection) await connection.end();
   }
 }
 
 export async function POST(request: NextRequest) {
+  let connection;
   try {
     const formData = await request.formData();
-    const projects = await readPortfolioData();
-    const currentProjects = Array.isArray(projects) ? projects : [];
+    connection = await getConnection();
 
-    const newProject: any = {}; // Using 'any' for flexibility with FormData
+    const newProject: any = {};
 
     // Extract text fields
     newProject.title = formData.get('title') as string;
@@ -52,35 +75,27 @@ export async function POST(request: NextRequest) {
     newProject.services = servicesString ? servicesString.split(',').map(s => s.trim()).filter(s => s) : [];
     newProject.externalLink = formData.get('externalLink') as string || '';
 
-    // Create upload directory if it doesn't exist
     const uploadDir = join(process.cwd(), 'public', 'uploads', 'portfolio_images');
-    try {
-      await fs.mkdir(uploadDir, { recursive: true });
-    } catch (mkdirError) {
-      console.error("Failed to create upload directory:", mkdirError);
-      // This might not be fatal if directory already exists or has correct permissions
-    }
+    await mkdir(uploadDir, { recursive: true });
 
     // Handle main image
     const mainImageFile = formData.get('image') as File | null;
     if (mainImageFile && mainImageFile.size > 0) {
       const mainImageBuffer = Buffer.from(await mainImageFile.arrayBuffer());
-      // Sanitize filename and make it unique
       const safeFilename = mainImageFile.name.replace(/[^a-zA-Z0-9._-]/g, '_');
       const mainImageFilename = `${Date.now()}-${safeFilename}`;
       const mainImagePath = join(uploadDir, mainImageFilename);
       await writeFile(mainImagePath, mainImageBuffer);
       newProject.image = `/uploads/portfolio_images/${mainImageFilename}`;
-    } else if (formData.has('image_url')) { // Check if image_url is provided as fallback
+    } else if (formData.has('image_url')) {
         newProject.image = formData.get('image_url') as string || '';
     } else {
-        newProject.image = ''; // Explicitly set to empty if neither file nor URL
+        newProject.image = null;
     }
-
 
     // Handle gallery images
     const galleryImageFiles = formData.getAll('images') as File[];
-    newProject.images = []; // Initialize as empty array
+    newProject.images = [];
     if (galleryImageFiles && galleryImageFiles.length > 0) {
       for (const file of galleryImageFiles) {
         if (file && file.size > 0) {
@@ -93,7 +108,6 @@ export async function POST(request: NextRequest) {
         }
       }
     }
-    // Fallback for gallery image URLs if no files uploaded but URLs provided via 'images_urls'
     if (newProject.images.length === 0 && formData.has('images_urls')) {
         const galleryImageUrlsString = formData.get('images_urls') as string;
         if (galleryImageUrlsString) {
@@ -101,23 +115,31 @@ export async function POST(request: NextRequest) {
         }
     }
 
-    // Assign ID
-    let maxId = 0;
-    if (currentProjects.length > 0) {
-      maxId = Math.max(...currentProjects.map(p => (typeof p.id === 'number' ? p.id : 0)));
-    }
-    newProject.id = maxId + 1;
+    const projectForDb = prepareProjectForDb(newProject);
 
-    currentProjects.push(newProject);
-    await fs.writeFile(filePath, JSON.stringify(currentProjects, null, 2), 'utf-8');
+    const [result] = await connection.execute(
+      'INSERT INTO portfolio (title, category, description, client, year, services, externalLink, image, images) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        projectForDb.title,
+        projectForDb.category,
+        projectForDb.description,
+        projectForDb.client,
+        projectForDb.year,
+        projectForDb.services, // Already stringified JSON
+        projectForDb.externalLink,
+        projectForDb.image,
+        projectForDb.images, // Already stringified JSON
+      ]
+    );
 
-    return NextResponse.json(newProject, { status: 201 });
+    const insertedId = (result as any).insertId;
+    const createdProject = { ...newProject, id: insertedId };
+
+    return NextResponse.json(parseProjectFromDb(createdProject), { status: 201 });
   } catch (error: any) {
-    console.error('Failed to add new project with image uploads:', error);
-    // Check if the error is due to invalid JSON in the request (though less likely with FormData)
-    if (error instanceof SyntaxError && error.message.includes('JSON')) {
-      return NextResponse.json({ message: 'Invalid format in request (expected FormData)' }, { status: 400 });
-    }
+    console.error('Failed to add new project to DB with image uploads:', error);
     return NextResponse.json({ message: 'Error adding new project: ' + error.message }, { status: 500 });
+  } finally {
+    if (connection) await connection.end();
   }
 }
