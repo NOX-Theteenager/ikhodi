@@ -25,14 +25,17 @@ ENV NODE_ENV production
 # Next.js listens on port 3000 by default, and Render will use the PORT env var.
 # EXPOSE 3000 (Exposing is good practice but not strictly necessary for Render as it uses the PORT env var)
 
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/.next/standalone ./
-COPY --from=builder /app/.next/static ./.next/static
+# Create a non-root user and group
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nextjs -u 1001 -G nodejs
 
-# Set the correct user for running the application (optional but good practice)
-# USER nextjs (Next.js creates a 'nextjs' user in its official Docker image, but we are using a generic node image)
-# If you don't have a specific user, you can run as node or create one.
-# For now, we'll run as the default user (root, then node if specified by the base image)
+# Copy application files with correct ownership
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+# Set the user for running the application
+USER nextjs
 
 # 8. Command to start the application
 CMD ["node", "server.js"]

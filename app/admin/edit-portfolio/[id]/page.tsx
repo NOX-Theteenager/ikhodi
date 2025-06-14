@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, ImageIcon, LinkIcon, Save, ArrowLeft, CheckCircle, AlertCircle, Loader2, Edit3, X } from "lucide-react"
+import Image from "next/image" // Import next/image
 import Link from "next/link"
 
 const categories = ["Design", "Marketing", "Web"]
@@ -62,6 +63,7 @@ export default function EditPortfolioPage() {
   const [servicesString, setServicesString] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeletingImage, setIsDeletingImage] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
 
@@ -122,10 +124,45 @@ export default function EditPortfolioPage() {
     setGalleryImageFiles(e.target.files || null)
   }
 
+  const handleDeleteGalleryImage = async (imageUrlToDelete: string) => {
+    if (!projectData || !projectData.id) {
+      setMessage("Données du projet non disponibles.");
+      return;
+    }
+    if (isDeletingImage) return;
+
+    setIsDeletingImage(true);
+    setMessage("");
+
+    const filename = imageUrlToDelete.substring(imageUrlToDelete.lastIndexOf('/') + 1);
+
+    try {
+      const response = await fetch(`/api/portfolio/${projectData.id}/images/${encodeURIComponent(filename)}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProjectData((prevData) => ({
+          ...prevData!,
+          images: prevData!.images.filter((img) => img !== imageUrlToDelete),
+        }));
+        setMessage("Image de la galerie supprimée avec succès.");
+      } else {
+        const errorData = await response.json();
+        setMessage(`Échec de la suppression de l'image : ${errorData.message || "Erreur inconnue"}`);
+      }
+    } catch (err: any) {
+      console.error("Erreur lors de la suppression de l'image de la galerie:", err);
+      setMessage("Une erreur s'est produite lors de la suppression de l'image : " + err.message);
+    } finally {
+      setIsDeletingImage(false);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!id || !projectData) {
-      setMessage("Project data or ID is missing.")
+      setMessage("Les données du projet ou l'ID sont manquants.")
       return
     }
     setIsSubmitting(true)
@@ -420,11 +457,14 @@ export default function EditPortfolioPage() {
                       </CardHeader>
                       <CardContent className="space-y-4">
                         {projectData.image ? (
-                          <div className="relative group">
-                            <img
+                          <div className="relative group w-[320px] h-[192px]"> {/* Container for sizing */}
+                            <Image
                               src={projectData.image || "/placeholder.svg"}
                               alt="Image principale actuelle"
-                              className="max-w-xs max-h-48 rounded-lg shadow-sm object-contain border border-rose-pale/50"
+                              width={320}
+                              height={192}
+                              objectFit="contain" // Corresponds to object-contain
+                              className="rounded-lg shadow-sm border border-rose-pale/50"
                             />
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center">
                               <p className="text-white text-sm">Image actuelle</p>
@@ -466,13 +506,25 @@ export default function EditPortfolioPage() {
                         {projectData.images && projectData.images.length > 0 ? (
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                             {projectData.images.map((imgUrl, index) => (
-                              <div key={index} className="relative group">
-                                <img
+                              <div key={index} className="relative group w-full h-24"> {/* Container for sizing */}
+                                <Image
                                   src={imgUrl || "/placeholder.svg"}
                                   alt={`Image galerie ${index + 1}`}
-                                  className="w-full h-24 rounded-lg shadow-sm object-cover border border-violet-mauve/30"
+                                  width={96} // Example fixed width, height will match h-24 (96px)
+                                  height={96}
+                                  objectFit="cover" // Corresponds to object-cover
+                                  className="rounded-lg shadow-sm border border-violet-mauve/30"
                                 />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteGalleryImage(imgUrl)}
+                                  disabled={isDeletingImage}
+                                  className="absolute top-1 right-1 p-0.5 bg-red-600/70 hover:bg-red-500 text-white rounded-full smooth-transition opacity-0 group-hover:opacity-100 z-10"
+                                  aria-label="Supprimer l'image de la galerie"
+                                >
+                                  {isDeletingImage ? <Loader2 className="h-3 w-3 animate-spin"/> : <X className="h-3 w-3" />}
+                                </button>
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center pointer-events-none">
                                   <p className="text-white text-xs">{index + 1}</p>
                                 </div>
                               </div>
@@ -484,7 +536,7 @@ export default function EditPortfolioPage() {
 
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-violet-fonce dark:text-rose-pale">
-                            Remplacer la galerie
+                            Ajouter de nouvelles images à la galerie
                           </label>
                           <div className="relative">
                             <input
@@ -500,7 +552,7 @@ export default function EditPortfolioPage() {
                               <p className="text-sm text-muted-foreground">
                                 {galleryImageFiles && galleryImageFiles.length > 0
                                   ? `${galleryImageFiles.length} nouveau(x) fichier(s) sélectionné(s)`
-                                  : "Cliquez pour remplacer la galerie"}
+                                  : "Cliquez pour ajouter des images"}
                               </p>
                             </div>
                           </div>
@@ -523,7 +575,7 @@ export default function EditPortfolioPage() {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Button
                         type="submit"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || isDeletingImage}
                         className="px-8 py-3 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer"
                       >
                         {isSubmitting ? (
@@ -556,21 +608,21 @@ export default function EditPortfolioPage() {
               >
                 <Card
                   className={`border-l-4 ${
-                    message.startsWith("Failed") || message.startsWith("An error")
+                    message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur")
                       ? "border-l-red-500 bg-red-50 dark:bg-red-900/20"
                       : "border-l-green-500 bg-green-50 dark:bg-green-900/20"
                   }`}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      {message.startsWith("Failed") || message.startsWith("An error") ? (
+                      {message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur") ? (
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       ) : (
                         <CheckCircle className="h-5 w-5 text-green-500" />
                       )}
                       <p
                         className={`text-sm font-medium ${
-                          message.startsWith("Failed") || message.startsWith("An error")
+                          message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur")
                             ? "text-red-700 dark:text-red-300"
                             : "text-green-700 dark:text-green-300"
                         }`}
@@ -585,6 +637,6 @@ export default function EditPortfolioPage() {
           </AnimatePresence>
         </motion.div>
       </div>
-    </div>
-  )
+    </div>
+  )
 }

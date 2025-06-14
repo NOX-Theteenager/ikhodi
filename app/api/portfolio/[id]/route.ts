@@ -185,33 +185,20 @@ export async function PUT(
     const hasNewGalleryUploads = galleryImageFiles.some(file => file && file.size > 0);
 
     if (hasNewGalleryUploads) {
-      // Bonus: Delete old gallery images
-      if (projectToUpdate.images && projectToUpdate.images.length > 0) {
-        for (const oldImagePath of projectToUpdate.images) {
-          if (typeof oldImagePath === 'string' && oldImagePath.startsWith('/uploads/')) {
-            try {
-              await unlink(join(uploadDirRoot, oldImagePath));
-              console.log(`Deleted old gallery image: ${oldImagePath}`);
-            } catch (e: any) {
-                if (e.code !== 'ENOENT') {
-                    console.warn(`Failed to delete old gallery image ${oldImagePath}:`, e.message);
-                }
-            }
-          }
-        }
+      // Initialize images array if it's null or undefined
+      if (!projectToUpdate.images) {
+        projectToUpdate.images = [];
       }
 
-      let newGalleryPaths: string[] = [];
       for (const file of galleryImageFiles) {
         if (file && file.size > 0) { // Ensure to process only valid files
           const imageBuffer = Buffer.from(await file.arrayBuffer());
           const safeFilename = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
           const filename = `${Date.now()}-${safeFilename}`;
           await writeFile(join(uploadDir, filename), imageBuffer);
-          newGalleryPaths.push(`/uploads/portfolio_images/${filename}`);
+          projectToUpdate.images.push(`/uploads/portfolio_images/${filename}`);
         }
       }
-      projectToUpdate.images = newGalleryPaths;
     } else if (formData.has('images_urls')) {
         // If images_urls is explicitly provided, update the images field.
         // This allows clearing or replacing the gallery with URLs.
