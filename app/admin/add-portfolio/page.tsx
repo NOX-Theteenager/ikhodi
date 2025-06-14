@@ -123,11 +123,11 @@ export default function AddPortfolioPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 py-6 sm:py-8 px-4">
       <div className="container max-w-4xl mx-auto">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 sm:space-y-8">
           {/* Header */}
-          <motion.div variants={itemVariants} className="flex items-center gap-4">
+          <motion.div variants={itemVariants} className="flex items-center gap-3 sm:gap-4">
             <Link href="/admin/portfolio">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -137,32 +137,32 @@ export default function AddPortfolioPage() {
                 <ArrowLeft className="h-5 w-5 text-rose-vif" />
               </motion.div>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent truncate" title="Ajouter un Projet">
                 Ajouter un Projet
               </h1>
-              <p className="text-muted-foreground mt-1">Créez un nouveau projet pour votre portfolio</p>
+              <p className="text-muted-foreground mt-1 text-sm truncate" title="Créez un nouveau projet pour votre portfolio">Créez un nouveau projet pour votre portfolio</p>
             </div>
           </motion.div>
 
           {/* Form Card */}
           <motion.div variants={itemVariants}>
             <Card className="card-depth border-rose-pale/50 hover:border-rose-vif/30 smooth-transition">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-xl text-violet-fonce dark:text-rose-pale flex items-center gap-2">
+              <CardHeader className="pb-4 sm:pb-6 px-4 pt-4 sm:px-6 sm:pt-5">
+                <CardTitle className="text-lg sm:text-xl text-violet-fonce dark:text-rose-pale flex items-center gap-2">
                   <Plus className="h-5 w-5 text-rose-vif" />
                   Détails du Projet
                 </CardTitle>
-                <CardDescription>Remplissez les informations du nouveau projet portfolio</CardDescription>
+                <CardDescription className="text-sm">Remplissez les informations du nouveau projet portfolio</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 md:gap-6">
                     {/* Title */}
                     <motion.div variants={itemVariants} className="md:col-span-2">
                       <label
                         htmlFor="title"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Titre du Projet *
                       </label>
@@ -172,7 +172,7 @@ export default function AddPortfolioPage() {
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
                         required
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                         placeholder="Ex: Refonte de marque complète"
                       />
                     </motion.div>
@@ -181,7 +181,7 @@ export default function AddPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="category"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Catégorie *
                       </label>
@@ -189,7 +189,7 @@ export default function AddPortfolioPage() {
                         id="category"
                         value={category}
                         onChange={(e) => setCategory(e.target.value)}
-                        className="w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-vif focus:border-rose-vif"
+                        className="w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-vif focus:border-rose-vif text-sm sm:text-base"
                       >
                         {categories.map((cat) => (
                           <option key={cat} value={cat}>
@@ -203,7 +203,7 @@ export default function AddPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="year"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Année
                       </label>
@@ -212,7 +212,7 @@ export default function AddPortfolioPage() {
                         id="year"
                         value={year}
                         onChange={(e) => setYear(e.target.value)}
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                         placeholder="2024"
                       />
                     </motion.div>
@@ -221,7 +221,7 @@ export default function AddPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="client"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Client
                       </label>
@@ -230,7 +230,7 @@ export default function AddPortfolioPage() {
                         id="client"
                         value={client}
                         onChange={(e) => setClient(e.target.value)}
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                         placeholder="Nom du client"
                       />
                     </motion.div>
@@ -239,7 +239,7 @@ export default function AddPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="externalLink"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Lien Externe
                       </label>
@@ -250,7 +250,7 @@ export default function AddPortfolioPage() {
                           id="externalLink"
                           value={externalLink}
                           onChange={(e) => setExternalLink(e.target.value)}
-                          className="pl-10 focus:border-rose-vif focus:ring-rose-vif"
+                          className="pl-10 focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                           placeholder="https://example.com"
                         />
                       </div>
@@ -261,7 +261,7 @@ export default function AddPortfolioPage() {
                   <motion.div variants={itemVariants}>
                     <label
                       htmlFor="description"
-                      className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                      className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                     >
                       Description *
                     </label>
@@ -270,7 +270,7 @@ export default function AddPortfolioPage() {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       required
-                      className="min-h-[120px] focus:border-rose-vif focus:ring-rose-vif"
+                      className="min-h-[100px] sm:min-h-[120px] focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                       placeholder="Décrivez le projet en détail..."
                     />
                   </motion.div>
@@ -279,7 +279,7 @@ export default function AddPortfolioPage() {
                   <motion.div variants={itemVariants}>
                     <label
                       htmlFor="services"
-                      className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                      className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                     >
                       Services (séparés par des virgules)
                     </label>
@@ -288,25 +288,25 @@ export default function AddPortfolioPage() {
                       id="services"
                       value={services}
                       onChange={(e) => setServices(e.target.value)}
-                      className="focus:border-rose-vif focus:ring-rose-vif"
+                      className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                       placeholder="Design, Développement, Marketing"
                     />
                   </motion.div>
 
                   {/* Images Section */}
                   <motion.div variants={itemVariants} className="space-y-6">
-                    <h3 className="text-lg font-semibold text-violet-fonce dark:text-rose-pale flex items-center gap-2">
+                    <h3 className="text-md sm:text-lg font-semibold text-violet-fonce dark:text-rose-pale flex items-center gap-2">
                       <ImageIcon className="h-5 w-5 text-rose-vif" />
                       Images du Projet
                     </h3>
 
                     {/* Main Image */}
                     <Card className="border-violet-mauve/20">
-                      <CardHeader className="pb-4">
-                        <CardTitle className="text-base">Image Principale</CardTitle>
-                        <CardDescription>Téléchargez l'image principale du projet</CardDescription>
+                      <CardHeader className="pb-3 sm:pb-4 px-3 pt-3 sm:px-4 sm:pt-4">
+                        <CardTitle className="text-sm sm:text-base">Image Principale</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">Téléchargez l'image principale du projet</CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3 sm:space-y-4 px-3 pb-3 sm:px-4 sm:pb-4">
                         <div className="relative">
                           <input
                             type="file"
@@ -315,32 +315,32 @@ export default function AddPortfolioPage() {
                             onChange={handleMainImageChange}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
-                          <div className="border-2 border-dashed border-rose-vif/30 rounded-lg p-6 text-center hover:border-rose-vif/50 smooth-transition">
-                            <Upload className="h-8 w-8 text-rose-vif mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">Cliquez pour télécharger ou glissez-déposez</p>
+                          <div className="border-2 border-dashed border-rose-vif/30 rounded-lg p-4 sm:p-6 text-center hover:border-rose-vif/50 smooth-transition">
+                            <Upload className="h-6 sm:h-8 w-6 sm:h-8 text-rose-vif mx-auto mb-1.5 sm:mb-2" />
+                            <p className="text-xs sm:text-sm text-muted-foreground">Cliquez pour télécharger ou glissez-déposez</p>
                             {mainImageFile && (
-                              <p className="text-xs text-rose-vif mt-2">Fichier sélectionné: {mainImageFile.name}</p>
+                              <p className="text-xs text-rose-vif mt-2 truncate" title={mainImageFile.name}>Fichier sélectionné: {mainImageFile.name}</p>
                             )}
                           </div>
                         </div>
-                        <div className="text-center text-sm text-muted-foreground">ou</div>
+                        <div className="text-center text-xs sm:text-sm text-muted-foreground">ou</div>
                         <Input
                           type="text"
                           value={mainImageUrl}
                           onChange={(e) => setMainImageUrl(e.target.value)}
                           placeholder="URL de l'image (fallback)"
-                          className="focus:border-rose-vif focus:ring-rose-vif"
+                          className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base"
                         />
                       </CardContent>
                     </Card>
 
                     {/* Gallery Images */}
                     <Card className="border-violet-mauve/20">
-                      <CardHeader className="pb-4">
-                        <CardTitle className="text-base">Galerie d'Images</CardTitle>
-                        <CardDescription>Téléchargez plusieurs images pour la galerie</CardDescription>
+                      <CardHeader className="pb-3 sm:pb-4 px-3 pt-3 sm:px-4 sm:pt-4">
+                        <CardTitle className="text-sm sm:text-base">Galerie d'Images</CardTitle>
+                        <CardDescription className="text-xs sm:text-sm">Téléchargez plusieurs images pour la galerie</CardDescription>
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3 sm:space-y-4 px-3 pb-3 sm:px-4 sm:pb-4">
                         <div className="relative">
                           <input
                             type="file"
@@ -350,9 +350,9 @@ export default function AddPortfolioPage() {
                             onChange={handleGalleryImagesChange}
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
-                          <div className="border-2 border-dashed border-violet-mauve/30 rounded-lg p-6 text-center hover:border-violet-mauve/50 smooth-transition">
-                            <Upload className="h-8 w-8 text-violet-mauve mx-auto mb-2" />
-                            <p className="text-sm text-muted-foreground">
+                          <div className="border-2 border-dashed border-violet-mauve/30 rounded-lg p-4 sm:p-6 text-center hover:border-violet-mauve/50 smooth-transition">
+                            <Upload className="h-6 sm:h-8 w-6 sm:h-8 text-violet-mauve mx-auto mb-1.5 sm:mb-2" />
+                            <p className="text-xs sm:text-sm text-muted-foreground">
                               Sélectionnez plusieurs images pour la galerie
                             </p>
                             {galleryImageFiles && galleryImageFiles.length > 0 && (
@@ -362,25 +362,35 @@ export default function AddPortfolioPage() {
                             )}
                           </div>
                         </div>
-                        <div className="text-center text-sm text-muted-foreground">ou</div>
+                        <div className="text-center text-xs sm:text-sm text-muted-foreground">ou</div>
                         <Input
                           type="text"
                           value={galleryImageUrls}
                           onChange={(e) => setGalleryImageUrls(e.target.value)}
                           placeholder="URLs des images séparées par des virgules (fallback)"
-                          className="focus:border-violet-mauve focus:ring-violet-mauve"
+                          className="focus:border-violet-mauve focus:ring-violet-mauve text-sm sm:text-base"
                         />
                       </CardContent>
                     </Card>
                   </motion.div>
 
                   {/* Submit Button */}
-                  <motion.div variants={itemVariants} className="flex justify-end pt-6">
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <motion.div variants={itemVariants} className="flex flex-col xs:flex-row xs:justify-end items-stretch xs:items-center gap-3 pt-4 sm:pt-6">
+                     <Link href="/admin/portfolio" className="w-full xs:w-auto order-2 xs:order-1">
+                      <Button
+                        type="button" // Important: Set to "button" to prevent form submission
+                        variant="outline"
+                        className="border-muted-foreground text-muted-foreground hover:bg-muted w-full xs:w-auto text-sm sm:text-base"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" /> {/* Changed X to ArrowLeft for "Cancel/Back" */}
+                        Annuler
+                      </Button>
+                    </Link>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full xs:w-auto order-1 xs:order-2">
                       <Button
                         type="submit"
                         disabled={submitting}
-                        className="px-8 py-3 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer"
+                        className="px-6 py-3 sm:px-8 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer w-full xs:w-auto text-sm sm:text-base"
                       >
                         {submitting ? (
                           <>

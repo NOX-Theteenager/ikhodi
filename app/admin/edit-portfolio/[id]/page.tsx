@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Upload, ImageIcon, LinkIcon, Save, ArrowLeft, CheckCircle, AlertCircle, Loader2, Edit3, X } from "lucide-react"
+import Image from "next/image" // Import next/image
 import Link from "next/link"
 
 const categories = ["Design", "Marketing", "Web"]
@@ -62,6 +63,7 @@ export default function EditPortfolioPage() {
   const [servicesString, setServicesString] = useState("")
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isDeletingImage, setIsDeletingImage] = useState(false)
   const [message, setMessage] = useState("")
   const [error, setError] = useState("")
 
@@ -122,10 +124,45 @@ export default function EditPortfolioPage() {
     setGalleryImageFiles(e.target.files || null)
   }
 
+  const handleDeleteGalleryImage = async (imageUrlToDelete: string) => {
+    if (!projectData || !projectData.id) {
+      setMessage("Données du projet non disponibles.");
+      return;
+    }
+    if (isDeletingImage) return;
+
+    setIsDeletingImage(true);
+    setMessage("");
+
+    const filename = imageUrlToDelete.substring(imageUrlToDelete.lastIndexOf('/') + 1);
+
+    try {
+      const response = await fetch(`/api/portfolio/${projectData.id}/images/${encodeURIComponent(filename)}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        setProjectData((prevData) => ({
+          ...prevData!,
+          images: prevData!.images.filter((img) => img !== imageUrlToDelete),
+        }));
+        setMessage("Image de la galerie supprimée avec succès.");
+      } else {
+        const errorData = await response.json();
+        setMessage(`Échec de la suppression de l'image : ${errorData.message || "Erreur inconnue"}`);
+      }
+    } catch (err: any) {
+      console.error("Erreur lors de la suppression de l'image de la galerie:", err);
+      setMessage("Une erreur s'est produite lors de la suppression de l'image : " + err.message);
+    } finally {
+      setIsDeletingImage(false);
+    }
+  };
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (!id || !projectData) {
-      setMessage("Project data or ID is missing.")
+      setMessage("Les données du projet ou l'ID sont manquants.")
       return
     }
     setIsSubmitting(true)
@@ -233,11 +270,11 @@ export default function EditPortfolioPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 py-8 px-4">
-      <div className="container max-w-4xl mx-auto">
-        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 py-6 sm:py-8 px-4"> {/* Adjusted padding for sm screens */}
+      <div className="container max-w-4xl mx-auto"> {/* max-w-4xl is good for larger, container handles smaller */}
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="space-y-6 sm:space-y-8"> {/* Adjusted spacing */}
           {/* Header */}
-          <motion.div variants={itemVariants} className="flex items-center gap-4">
+          <motion.div variants={itemVariants} className="flex items-center gap-3 sm:gap-4"> {/* Adjusted gap */}
             <Link href="/admin/portfolio">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -247,11 +284,11 @@ export default function EditPortfolioPage() {
                 <ArrowLeft className="h-5 w-5 text-rose-vif" />
               </motion.div>
             </Link>
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent">
+            <div className="flex-1 min-w-0"> {/* Added flex-1 and min-w-0 for truncation */}
+              <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent truncate" title="Modifier le Projet"> {/* Responsive font, truncate */}
                 Modifier le Projet
               </h1>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-muted-foreground mt-1 text-sm truncate" title={`ID: ${id} • ${projectData.title}`}> {/* Truncate, responsive text */}
                 ID: {id} • {projectData.title}
               </p>
             </div>
@@ -260,21 +297,21 @@ export default function EditPortfolioPage() {
           {/* Form Card */}
           <motion.div variants={itemVariants}>
             <Card className="card-depth border-rose-pale/50 hover:border-rose-vif/30 smooth-transition">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-xl text-violet-fonce dark:text-rose-pale flex items-center gap-2">
+              <CardHeader className="pb-4 sm:pb-6 px-4 pt-4 sm:px-6 sm:pt-5"> {/* Adjusted padding */}
+                <CardTitle className="text-lg sm:text-xl text-violet-fonce dark:text-rose-pale flex items-center gap-2"> {/* Responsive font */}
                   <Edit3 className="h-5 w-5 text-rose-vif" />
                   Modifier les Détails
                 </CardTitle>
-                <CardDescription>Modifiez les informations du projet portfolio</CardDescription>
+                <CardDescription className="text-sm">Modifiez les informations du projet portfolio</CardDescription> {/* Ensure text size is fine */}
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6"> {/* Adjusted padding */}
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-6 md:gap-6"> {/* Adjusted gap for tighter mobile */}
                     {/* Title */}
                     <motion.div variants={itemVariants} className="md:col-span-2">
                       <label
                         htmlFor="title"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2" /* Smaller bottom margin on mobile */
                       >
                         Titre du Projet *
                       </label>
@@ -285,7 +322,7 @@ export default function EditPortfolioPage() {
                         value={projectData.title}
                         onChange={handleTextChange}
                         required
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                       />
                     </motion.div>
 
@@ -293,7 +330,7 @@ export default function EditPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="category"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Catégorie *
                       </label>
@@ -302,7 +339,7 @@ export default function EditPortfolioPage() {
                         name="category"
                         value={projectData.category}
                         onChange={handleTextChange}
-                        className="w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-vif focus:border-rose-vif"
+                        className="w-full px-3 py-2 bg-background border border-input rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-vif focus:border-rose-vif text-sm sm:text-base" /* Responsive text */
                       >
                         {categories.map((cat) => (
                           <option key={cat} value={cat}>
@@ -316,7 +353,7 @@ export default function EditPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="year"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Année
                       </label>
@@ -326,7 +363,7 @@ export default function EditPortfolioPage() {
                         name="year"
                         value={projectData.year}
                         onChange={handleTextChange}
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                       />
                     </motion.div>
 
@@ -334,7 +371,7 @@ export default function EditPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="client"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Client
                       </label>
@@ -344,7 +381,7 @@ export default function EditPortfolioPage() {
                         name="client"
                         value={projectData.client}
                         onChange={handleTextChange}
-                        className="focus:border-rose-vif focus:ring-rose-vif"
+                        className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                       />
                     </motion.div>
 
@@ -352,7 +389,7 @@ export default function EditPortfolioPage() {
                     <motion.div variants={itemVariants}>
                       <label
                         htmlFor="externalLink"
-                        className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                        className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                       >
                         Lien Externe
                       </label>
@@ -364,7 +401,7 @@ export default function EditPortfolioPage() {
                           name="externalLink"
                           value={projectData.externalLink}
                           onChange={handleTextChange}
-                          className="pl-10 focus:border-rose-vif focus:ring-rose-vif"
+                          className="pl-10 focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                         />
                       </div>
                     </motion.div>
@@ -374,7 +411,7 @@ export default function EditPortfolioPage() {
                   <motion.div variants={itemVariants}>
                     <label
                       htmlFor="description"
-                      className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                      className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                     >
                       Description *
                     </label>
@@ -384,7 +421,7 @@ export default function EditPortfolioPage() {
                       value={projectData.description}
                       onChange={handleTextChange}
                       required
-                      className="min-h-[120px] focus:border-rose-vif focus:ring-rose-vif"
+                      className="min-h-[100px] sm:min-h-[120px] focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive min-height and text */
                     />
                   </motion.div>
 
@@ -392,7 +429,7 @@ export default function EditPortfolioPage() {
                   <motion.div variants={itemVariants}>
                     <label
                       htmlFor="services"
-                      className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                      className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1.5 sm:mb-2"
                     >
                       Services (séparés par des virgules)
                     </label>
@@ -402,29 +439,31 @@ export default function EditPortfolioPage() {
                       name="services"
                       value={servicesString}
                       onChange={handleServicesChange}
-                      className="focus:border-rose-vif focus:ring-rose-vif"
+                      className="focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                     />
                   </motion.div>
 
                   {/* Current Images */}
                   <motion.div variants={itemVariants} className="space-y-6">
-                    <h3 className="text-lg font-semibold text-violet-fonce dark:text-rose-pale flex items-center gap-2">
+                    <h3 className="text-md sm:text-lg font-semibold text-violet-fonce dark:text-rose-pale flex items-center gap-2"> {/* Responsive text */}
                       <ImageIcon className="h-5 w-5 text-rose-vif" />
                       Images du Projet
                     </h3>
 
                     {/* Current Main Image */}
                     <Card className="border-violet-mauve/20">
-                      <CardHeader className="pb-4">
-                        <CardTitle className="text-base">Image Principale Actuelle</CardTitle>
+                      <CardHeader className="pb-3 sm:pb-4 px-3 pt-3 sm:px-4 sm:pt-4"> {/* Adjusted padding */}
+                        <CardTitle className="text-sm sm:text-base">Image Principale Actuelle</CardTitle> {/* Responsive text */}
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3 sm:space-y-4 px-3 pb-3 sm:px-4 sm:pb-4"> {/* Adjusted padding and spacing */}
                         {projectData.image ? (
-                          <div className="relative group">
-                            <img
+                          <div className="relative group w-full max-w-[320px] h-auto aspect-[16/10] sm:aspect-[16/9]"> {/* Responsive container, aspect ratio */}
+                            <Image
                               src={projectData.image || "/placeholder.svg"}
                               alt="Image principale actuelle"
-                              className="max-w-xs max-h-48 rounded-lg shadow-sm object-contain border border-rose-pale/50"
+                              layout="fill" // Use fill for responsiveness within aspect ratio container
+                              objectFit="contain"
+                              className="rounded-lg shadow-sm border border-rose-pale/50"
                             />
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center">
                               <p className="text-white text-sm">Image actuelle</p>
@@ -434,8 +473,8 @@ export default function EditPortfolioPage() {
                           <p className="text-sm text-muted-foreground italic">Aucune image principale.</p>
                         )}
 
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-violet-fonce dark:text-rose-pale">
+                        <div className="space-y-1.5 sm:space-y-2">
+                          <label className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale">
                             Remplacer l'image principale
                           </label>
                           <div className="relative">
@@ -446,9 +485,9 @@ export default function EditPortfolioPage() {
                               onChange={handleMainImageChange}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             />
-                            <div className="border-2 border-dashed border-rose-vif/30 rounded-lg p-4 text-center hover:border-rose-vif/50 smooth-transition">
-                              <Upload className="h-6 w-6 text-rose-vif mx-auto mb-2" />
-                              <p className="text-sm text-muted-foreground">
+                            <div className="border-2 border-dashed border-rose-vif/30 rounded-lg p-3 sm:p-4 text-center hover:border-rose-vif/50 smooth-transition"> {/* Adjusted padding */}
+                              <Upload className="h-5 sm:h-6 w-5 sm:h-6 text-rose-vif mx-auto mb-1 sm:mb-2" /> {/* Adjusted size/margin */}
+                              <p className="text-xs sm:text-sm text-muted-foreground"> {/* Responsive text */}
                                 {mainImageFile ? `Nouveau fichier: ${mainImageFile.name}` : "Cliquez pour remplacer"}
                               </p>
                             </div>
@@ -459,20 +498,31 @@ export default function EditPortfolioPage() {
 
                     {/* Current Gallery Images */}
                     <Card className="border-violet-mauve/20">
-                      <CardHeader className="pb-4">
-                        <CardTitle className="text-base">Galerie Actuelle</CardTitle>
+                      <CardHeader className="pb-3 sm:pb-4 px-3 pt-3 sm:px-4 sm:pt-4"> {/* Adjusted padding */}
+                        <CardTitle className="text-sm sm:text-base">Galerie Actuelle</CardTitle> {/* Responsive text */}
                       </CardHeader>
-                      <CardContent className="space-y-4">
+                      <CardContent className="space-y-3 sm:space-y-4 px-3 pb-3 sm:px-4 sm:pb-4"> {/* Adjusted padding and spacing */}
                         {projectData.images && projectData.images.length > 0 ? (
-                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                          <div className="grid grid-cols-3 xs:grid-cols-3 sm:grid-cols-4 gap-2 sm:gap-3"> {/* Adjusted grid columns for xs, gap */}
                             {projectData.images.map((imgUrl, index) => (
-                              <div key={index} className="relative group">
-                                <img
+                              <div key={index} className="relative group w-full aspect-square"> {/* Aspect square for gallery thumbs */}
+                                <Image
                                   src={imgUrl || "/placeholder.svg"}
                                   alt={`Image galerie ${index + 1}`}
-                                  className="w-full h-24 rounded-lg shadow-sm object-cover border border-violet-mauve/30"
+                                  layout="fill" // Use fill for responsiveness
+                                  objectFit="cover"
+                                  className="rounded-lg shadow-sm border border-violet-mauve/30"
                                 />
-                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center">
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteGalleryImage(imgUrl)}
+                                  disabled={isDeletingImage}
+                                  className="absolute top-1 right-1 p-0.5 bg-red-600/70 hover:bg-red-500 text-white rounded-full smooth-transition opacity-0 group-hover:opacity-100 z-10"
+                                  aria-label="Supprimer l'image de la galerie"
+                                >
+                                  {isDeletingImage ? <Loader2 className="h-3 w-3 animate-spin"/> : <X className="h-3 w-3" />}
+                                </button>
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center pointer-events-none">
                                   <p className="text-white text-xs">{index + 1}</p>
                                 </div>
                               </div>
@@ -482,9 +532,9 @@ export default function EditPortfolioPage() {
                           <p className="text-sm text-muted-foreground italic">Aucune image de galerie.</p>
                         )}
 
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-violet-fonce dark:text-rose-pale">
-                            Remplacer la galerie
+                        <div className="space-y-1.5 sm:space-y-2"> {/* Adjusted spacing */}
+                          <label className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale"> {/* Responsive text */}
+                            Ajouter de nouvelles images à la galerie
                           </label>
                           <div className="relative">
                             <input
@@ -495,12 +545,12 @@ export default function EditPortfolioPage() {
                               onChange={handleGalleryImagesChange}
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             />
-                            <div className="border-2 border-dashed border-violet-mauve/30 rounded-lg p-4 text-center hover:border-violet-mauve/50 smooth-transition">
-                              <Upload className="h-6 w-6 text-violet-mauve mx-auto mb-2" />
-                              <p className="text-sm text-muted-foreground">
+                            <div className="border-2 border-dashed border-violet-mauve/30 rounded-lg p-3 sm:p-4 text-center hover:border-violet-mauve/50 smooth-transition"> {/* Adjusted padding */}
+                              <Upload className="h-5 sm:h-6 w-5 sm:h-6 text-violet-mauve mx-auto mb-1 sm:mb-2" /> {/* Adjusted size/margin */}
+                              <p className="text-xs sm:text-sm text-muted-foreground"> {/* Responsive text */}
                                 {galleryImageFiles && galleryImageFiles.length > 0
                                   ? `${galleryImageFiles.length} nouveau(x) fichier(s) sélectionné(s)`
-                                  : "Cliquez pour remplacer la galerie"}
+                                  : "Cliquez pour ajouter des images"}
                               </p>
                             </div>
                           </div>
@@ -510,21 +560,21 @@ export default function EditPortfolioPage() {
                   </motion.div>
 
                   {/* Action Buttons */}
-                  <motion.div variants={itemVariants} className="flex justify-between items-center pt-6">
-                    <Link href="/admin/portfolio">
+                  <motion.div variants={itemVariants} className="flex flex-col xs:flex-row xs:justify-between items-stretch xs:items-center gap-3 pt-4 sm:pt-6"> {/* Stack on xs, items-stretch for full width buttons when stacked, adjusted gap and padding */}
+                    <Link href="/admin/portfolio" className="w-full xs:w-auto">
                       <Button
                         variant="outline"
-                        className="border-muted-foreground text-muted-foreground hover:bg-muted"
+                        className="border-muted-foreground text-muted-foreground hover:bg-muted w-full xs:w-auto text-sm sm:text-base" /* Full width on stack */
                       >
                         <X className="h-4 w-4 mr-2" />
                         Annuler
                       </Button>
                     </Link>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full xs:w-auto">
                       <Button
                         type="submit"
-                        disabled={isSubmitting}
-                        className="px-8 py-3 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer"
+                        disabled={isSubmitting || isDeletingImage}
+                        className="px-6 py-3 sm:px-8 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer w-full xs:w-auto text-sm sm:text-base" /* Adjusted padding, full width on stack */
                       >
                         {isSubmitting ? (
                           <>
@@ -556,21 +606,21 @@ export default function EditPortfolioPage() {
               >
                 <Card
                   className={`border-l-4 ${
-                    message.startsWith("Failed") || message.startsWith("An error")
+                    message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur")
                       ? "border-l-red-500 bg-red-50 dark:bg-red-900/20"
                       : "border-l-green-500 bg-green-50 dark:bg-green-900/20"
                   }`}
                 >
                   <CardContent className="p-4">
                     <div className="flex items-center gap-3">
-                      {message.startsWith("Failed") || message.startsWith("An error") ? (
+                      {message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur") ? (
                         <AlertCircle className="h-5 w-5 text-red-500" />
                       ) : (
                         <CheckCircle className="h-5 w-5 text-green-500" />
                       )}
                       <p
                         className={`text-sm font-medium ${
-                          message.startsWith("Failed") || message.startsWith("An error")
+                          message.toLowerCase().startsWith("failed") || message.toLowerCase().startsWith("an error") || message.toLowerCase().startsWith("échec") || message.toLowerCase().startsWith("une erreur")
                             ? "text-red-700 dark:text-red-300"
                             : "text-green-700 dark:text-green-300"
                         }`}
@@ -585,6 +635,6 @@ export default function EditPortfolioPage() {
           </AnimatePresence>
         </motion.div>
       </div>
-    </div>
-  )
+    </div>
+  )
 }

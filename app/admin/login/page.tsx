@@ -72,11 +72,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-rose-pale/20 via-background to-violet-mauve/10 flex items-center justify-center p-3 xs:p-4"> {/* Slightly less padding on xxs */}
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <motion.div
-          className="absolute top-20 left-10 w-32 h-32 rounded-full bg-rose-vif/5 blur-xl"
+          className="absolute top-20 left-10 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-rose-vif/5 blur-xl" /* Smaller on mobile */
           animate={{
             y: [0, -20, 0],
             scale: [1, 1.1, 1],
@@ -88,7 +88,7 @@ export default function AdminLoginPage() {
           }}
         />
         <motion.div
-          className="absolute bottom-20 right-10 w-40 h-40 rounded-full bg-violet-mauve/5 blur-xl"
+          className="absolute bottom-20 right-10 w-32 h-32 sm:w-40 sm:h-40 rounded-full bg-violet-mauve/5 blur-xl" /* Smaller on mobile */
           animate={{
             y: [0, 20, 0],
             scale: [1, 0.9, 1],
@@ -110,29 +110,29 @@ export default function AdminLoginPage() {
       >
         <Card className="card-depth border-rose-pale/50 hover:border-rose-vif/30 smooth-transition overflow-hidden">
           {/* Header with gradient */}
-          <div className="relative bg-gradient-to-r from-rose-vif to-violet-mauve p-6 text-white">
+          <div className="relative bg-gradient-to-r from-rose-vif to-violet-mauve p-4 sm:p-6 text-white"> {/* Adjusted padding */}
             <motion.div variants={itemVariants} className="text-center">
               <motion.div
-                className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full mb-4"
+                className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-white/20 backdrop-blur-sm rounded-full mb-3 sm:mb-4" /* Responsive size and margin */
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 transition={{ type: "spring", stiffness: 400, damping: 17 }}
               >
-                <Shield className="h-8 w-8" />
+                <Shield className="h-6 w-6 sm:h-8 sm:w-8" /> {/* Responsive icon size */}
               </motion.div>
-              <h1 className="text-2xl font-bold mb-2">Panneau d'Administration</h1>
-              <p className="text-white/80 text-sm">Accès sécurisé au tableau de bord</p>
+              <h1 className="text-xl sm:text-2xl font-bold mb-1 sm:mb-2">Panneau d'Administration</h1> {/* Responsive font and margin */}
+              <p className="text-white/80 text-xs sm:text-sm">Accès sécurisé au tableau de bord</p> {/* Responsive font */}
             </motion.div>
 
             {/* Decorative pattern */}
             <div className="absolute inset-0 bg-gradient-to-r from-white/5 via-transparent to-white/5 opacity-50" />
           </div>
 
-          <CardContent className="p-6 space-y-6">
-            <form onSubmit={handleSubmit} className="space-y-6">
+          <CardContent className="p-4 sm:p-6 space-y-4 sm:space-y-6"> {/* Adjusted padding and spacing */}
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6"> {/* Adjusted spacing */}
               <motion.div variants={itemVariants}>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-violet-fonce dark:text-rose-pale mb-2"
+                  className="block text-xs sm:text-sm font-medium text-violet-fonce dark:text-rose-pale mb-1 sm:mb-1.5" /* Responsive text and margin */
                 >
                   Mot de passe
                 </label>
@@ -144,7 +144,7 @@ export default function AdminLoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="pl-10 pr-12 focus:border-rose-vif focus:ring-rose-vif"
+                    className="pl-10 pr-12 focus:border-rose-vif focus:ring-rose-vif text-sm sm:text-base" /* Responsive text */
                     placeholder="Entrez votre mot de passe"
                   />
                   <motion.button
@@ -173,9 +173,9 @@ export default function AdminLoginPage() {
                     transition={{ duration: 0.3 }}
                     variants={itemVariants}
                   >
-                    <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                      <AlertCircle className="h-5 w-5 text-red-500 flex-shrink-0" />
-                      <p className="text-sm text-red-700 dark:text-red-300">{error}</p>
+                    <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg"> {/* Adjusted padding and gap */}
+                      <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5 text-red-500 flex-shrink-0" /> {/* Responsive icon size */}
+                      <p className="text-xs sm:text-sm text-red-700 dark:text-red-300">{error}</p> {/* Responsive text */}
                     </div>
                   </motion.div>
                 )}
@@ -190,7 +190,7 @@ export default function AdminLoginPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer focus-ring"
+                    className="w-full py-2.5 sm:py-3 bg-gradient-to-r from-rose-vif to-violet-mauve hover:from-rouge-framboise hover:to-violet-fonce smooth-transition shimmer focus-ring text-sm sm:text-base" /* Adjusted padding, responsive text */
                   >
                     {isSubmitting ? (
                       <>
@@ -209,17 +209,17 @@ export default function AdminLoginPage() {
             </form>
 
             {/* Security Notice */}
-            <motion.div variants={itemVariants} className="text-center pt-4 border-t border-border/50">
+            <motion.div variants={itemVariants} className="text-center pt-3 sm:pt-4 border-t border-border/50"> {/* Adjusted padding */}
               <p className="text-xs text-muted-foreground">🔒 Connexion sécurisée • Accès administrateur uniquement</p>
             </motion.div>
           </CardContent>
         </Card>
 
         {/* Additional Info */}
-        <motion.div variants={itemVariants} className="mt-6 text-center">
-          <p className="text-sm text-muted-foreground">Besoin d'aide ? Contactez l'administrateur système</p>
+        <motion.div variants={itemVariants} className="mt-4 sm:mt-6 text-center"> {/* Adjusted margin */}
+          <p className="text-xs sm:text-sm text-muted-foreground">Besoin d'aide ? Contactez l'administrateur système</p> {/* Responsive text */}
         </motion.div>
       </motion.div>
-    </div>
-  )
+    </div>
+  )
 }

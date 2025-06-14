@@ -231,43 +231,46 @@ export default function AdminPortfolioListPage() {
               )}
             </div>
 
-            <CardHeader className="pb-3">
-              <div className="flex items-start justify-between">
-                <div className="flex-1 min-w-0">
-                  <h3 className="text-lg font-semibold text-violet-fonce dark:text-rose-pale truncate">
+            <CardHeader className="pb-3 px-4 pt-4 sm:px-6 sm:pt-5"> {/* Adjusted padding */}
+              <div className="flex flex-col xs:flex-row items-start justify-between gap-2 xs:gap-0"> {/* Stack on very small, then row */}
+                <div className="flex-1 min-w-0 order-2 xs:order-1"> {/* Ensure title takes space, reorder for stacking */}
+                  <h3 className="text-base sm:text-lg font-semibold text-violet-fonce dark:text-rose-pale truncate" title={project.title}>
                     {project.title}
                   </h3>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                  <div className="flex flex-col xs:flex-row xs:items-center gap-x-3 gap-y-1 mt-1 text-xs sm:text-sm text-muted-foreground"> {/* Stack details, then row. Adjusted gap. */}
                     {project.client && (
-                      <div className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        <span className="truncate">{project.client}</span>
+                      <div className="flex items-center gap-1 min-w-0"> {/* min-w-0 for truncate */}
+                        <User className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate" title={project.client}>{project.client}</span>
                       </div>
                     )}
+                    {project.client && project.year && <span className="hidden xs:inline">•</span>} {/* Separator for row view */}
                     {project.year && (
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3" />
+                        <Calendar className="h-3 w-3 flex-shrink-0" />
                         <span>{project.year}</span>
                       </div>
                     )}
                   </div>
                 </div>
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-full">#{project.id}</span>
+                <span className="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded-full order-1 xs:order-2 self-start xs:self-auto"> {/* Smaller padding, reorder for stacking */}
+                  #{project.id}
+                </span>
               </div>
             </CardHeader>
 
-            <CardContent className="pt-0">
+            <CardContent className="pt-0 pb-4 px-4 sm:px-6"> {/* Adjusted padding */}
               {/* Services */}
               {project.services && project.services.length > 0 && (
-                <div className="mb-4">
+                <div className="mb-3"> {/* Adjusted margin */}
                   <div className="flex flex-wrap gap-1">
                     {project.services.slice(0, 3).map((service, index) => (
-                      <span key={index} className="px-2 py-1 text-xs bg-violet-mauve/10 text-violet-mauve rounded-full">
+                      <span key={index} className="px-1.5 py-0.5 text-[10px] sm:text-xs bg-violet-mauve/10 text-violet-mauve rounded-full"> {/* Adjusted padding and font size */}
                         {service}
                       </span>
                     ))}
                     {project.services.length > 3 && (
-                      <span className="px-2 py-1 text-xs bg-muted text-muted-foreground rounded-full">
+                      <span className="px-1.5 py-0.5 text-[10px] sm:text-xs bg-muted text-muted-foreground rounded-full"> {/* Adjusted padding and font size */}
                         +{project.services.length - 3}
                       </span>
                     )}
@@ -276,43 +279,46 @@ export default function AdminPortfolioListPage() {
               )}
 
               {/* Actions */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                    <Link href={`/admin/edit-portfolio/${project.id}`}>
+              <div className="flex flex-col xs:flex-row items-stretch xs:items-center xs:justify-between gap-2"> {/* Stacks on xs, then row. Gap for stacking. items-stretch for full width buttons when stacked */}
+                <div className="flex flex-col xxs:flex-row items-stretch xxs:items-center gap-2"> {/* Stacks on xxs, then row. For "Modifier" and "Voir" */}
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full xxs:w-auto">
+                    <Link href={`/admin/edit-portfolio/${project.id}`} className="block w-full xxs:w-auto">
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8 px-3 border-violet-mauve/30 hover:bg-violet-mauve/10"
+                        className="h-8 px-3 border-violet-mauve/30 hover:bg-violet-mauve/10 w-full xxs:w-auto text-xs sm:text-sm justify-center" // Full width on stack
                       >
-                        <Edit3 className="h-3 w-3 mr-1" />
+                        <Edit3 className="h-3 w-3 mr-1.5 flex-shrink-0" />
                         Modifier
                       </Button>
                     </Link>
                   </motion.div>
                   {project.externalLink && (
-                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                      <Button size="sm" variant="ghost" className="h-8 px-3" asChild>
-                        <a href={project.externalLink} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-3 w-3" />
+                    <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full xxs:w-auto">
+                      <Button size="sm" variant="ghost" className="h-8 w-full xxs:w-auto xxs:px-3 p-0 text-xs sm:text-sm justify-center" asChild>
+                        <a href={project.externalLink} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center">
+                          <ExternalLink className="h-3 w-3 sm:mr-1.5 flex-shrink-0" />
+                          <span className="hidden sm:inline">Voir</span>
+                          <span className="sm:hidden">Lien</span>
                         </a>
                       </Button>
                     </motion.div>
                   )}
                 </div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="w-full xs:w-auto">
                   <Button
                     size="sm"
                     variant="ghost"
                     onClick={() => handleDelete(project.id)}
                     disabled={deletingId === project.id}
-                    className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20"
+                    className="h-8 px-3 text-red-600 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 w-full xs:w-auto text-xs sm:text-sm justify-center" // Full width on stack
                   >
                     {deletingId === project.id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
+                      <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
                     ) : (
-                      <Trash2 className="h-3 w-3" />
+                      <Trash2 className="h-3 w-3 mr-1.5 flex-shrink-0" />
                     )}
+                    Supprimer
                   </Button>
                 </motion.div>
               </div>
@@ -411,29 +417,29 @@ export default function AdminPortfolioListPage() {
       {/* Header */}
       <motion.div
         variants={itemVariants}
-        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        className="flex flex-col md:flex-row md:items-center md:justify-between gap-4" // Changed sm: to md: for a bit later stacking
       >
         <div>
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-rose-vif to-violet-mauve bg-clip-text text-transparent"> {/* Responsive font size */}
             Portfolio
           </h1>
-          <p className="text-muted-foreground mt-1">Gérez vos projets et réalisations</p>
+          <p className="text-muted-foreground mt-1 text-sm sm:text-base">Gérez vos projets et réalisations</p> {/* Responsive font size */}
         </div>
-        <div className="flex gap-2">
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <div className="flex flex-col xs:flex-row gap-2"> {/* Stacks on very small (col), then row for xs and up */}
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full xs:w-auto"> {/* Full width on col stack */}
             <Link href="/admin/add-portfolio">
-              <Button className="bg-rose-vif hover:bg-rouge-framboise smooth-transition">
+              <Button className="bg-rose-vif hover:bg-rouge-framboise smooth-transition w-full xs:w-auto"> {/* Full width on col stack */}
                 <Plus className="h-4 w-4 mr-2" />
                 Nouveau projet
               </Button>
             </Link>
           </motion.div>
-          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="w-full xs:w-auto"> {/* Full width on col stack */}
             <Button
               onClick={handleLogout}
               disabled={isLoggingOut}
               variant="outline"
-              className="border-rose-vif text-rose-vif hover:bg-rose-vif hover:text-white smooth-transition"
+              className="border-rose-vif text-rose-vif hover:bg-rose-vif hover:text-white smooth-transition w-full xs:w-auto" // Full width on col stack
             >
               {isLoggingOut ? (
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -472,25 +478,25 @@ export default function AdminPortfolioListPage() {
 
       {/* Filtres et recherche */}
       <motion.div variants={itemVariants} className="space-y-4">
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col md:flex-row gap-3 md:gap-4"> {/* Changed sm: to md:, adjusted gap */}
           {/* Recherche */}
-          <div className="relative flex-1">
+          <div className="relative flex-1 min-w-0"> {/* Added min-w-0 */}
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Rechercher par titre, catégorie ou client..."
               value={searchTerm}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
-              className="pl-10 border-rose-pale/50 focus:border-rose-vif"
+              className="pl-10 border-rose-pale/50 focus:border-rose-vif text-sm" /* Added text-sm */
             />
           </div>
 
           {/* Filtre par catégorie */}
           <div className="flex items-center gap-2">
-            <Filter className="h-4 w-4 text-muted-foreground" />
+            <Filter className="h-4 w-4 text-muted-foreground flex-shrink-0" /> {/* Added flex-shrink-0 */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-3 py-2 border border-rose-pale/50 rounded-md bg-background text-foreground focus:border-rose-vif focus:outline-none"
+              className="w-full md:w-auto px-3 py-2 border border-rose-pale/50 rounded-md bg-background text-foreground focus:border-rose-vif focus:outline-none text-sm" // Added w-full md:w-auto, text-sm
             >
               <option value="all">Toutes les catégories</option>
               {categories.slice(1).map((category) => (
@@ -502,15 +508,16 @@ export default function AdminPortfolioListPage() {
           </div>
 
           {/* Toggle vue */}
-          <div className="flex items-center border border-rose-pale/50 rounded-md p-1">
+          <div className="flex items-center border border-rose-pale/50 rounded-md p-0.5"> {/* Reduced p-1 to p-0.5 */}
             <Button
               size="sm"
               variant={viewMode === "grid" ? "default" : "ghost"}
               onClick={() => setViewMode("grid")}
               className={clsx(
-                "h-8 px-3",
+                "h-8 px-2 sm:px-3", // Adjusted padding for smaller screens
                 viewMode === "grid" && "bg-rose-vif hover:bg-rouge-framboise",
               )}
+              aria-label="Vue en grille"
             >
               <Grid3X3 className="h-4 w-4" />
             </Button>
@@ -519,9 +526,10 @@ export default function AdminPortfolioListPage() {
               variant={viewMode === "list" ? "default" : "ghost"}
               onClick={() => setViewMode("list")}
               className={clsx(
-                "h-8 px-3",
+                "h-8 px-2 sm:px-3", // Adjusted padding for smaller screens
                 viewMode === "list" && "bg-rose-vif hover:bg-rouge-framboise",
               )}
+              aria-label="Vue en liste"
             >
               <List className="h-4 w-4" />
             </Button>
@@ -529,7 +537,7 @@ export default function AdminPortfolioListPage() {
         </div>
 
         {/* Statistiques */}
-        <div className="flex items-center gap-6 text-sm text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-muted-foreground"> {/* Added flex-wrap and gap-y-2 */}
           <span>Total: {projects.length} projets</span>
           {(searchTerm || selectedCategory !== "all") && <span>Affichés: {filteredProjects.length} projets</span>}
         </div>
