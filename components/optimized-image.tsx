@@ -141,6 +141,10 @@ export default function OptimizedImage({
 
     // Pour les vraies images, vous pourriez implémenter une logique de redimensionnement côté serveur
     // Exemple : return `${originalSrc}?w=${width}&h=${height}&q=${quality}`
+    // Strip query parameters for internal images to ensure next/image handles them correctly
+    if (originalSrc.startsWith("/")) {
+      return originalSrc.split("?")[0];
+    }
     return originalSrc
   }
 
