@@ -40,15 +40,28 @@ export async function DELETE(
 
     const project = (rows as any[])[0] as ProjectImages;
     let currentImages: string[] = [];
-    if (project.images) {
+    if (project.images && typeof project.images === 'string') {
       try {
-        currentImages = JSON.parse(project.images);
-        if (!Array.isArray(currentImages)) currentImages = [];
+        if (project.images.trim().startsWith('[') || project.images.trim().startsWith('"')) {
+          currentImages = JSON.parse(project.images);
+          if (!Array.isArray(currentImages)) {
+            console.warn(`Project ID ${projectId}: 'images' field in DB parsed but was not an array: ${project.images}`);
+            currentImages = [];
+          }
+        } else if (project.images.trim() !== '') {
+          console.warn(`Project ID ${projectId}: 'images' field in DB is a string but not a valid JSON array/string format: ${project.images}`);
+          // If you expect single raw image paths and want to treat them as a gallery of one (potentially problematic for this delete logic)
+          // currentImages = [project.images.trim()];
+          // For now, if it's not a JSON array string, treat as empty or error, as deleting from it is ambiguous.
+          currentImages = [];
+        }
       } catch (e) {
-        // If JSON is malformed, treat as empty or handle error appropriately
-        console.error('Error parsing images JSON from DB:', e);
+        console.error(`Project ID ${projectId}: Failed to parse 'images' JSON string from DB: ${project.images}`, e);
         currentImages = [];
       }
+    } else if (Array.isArray(project.images)) {
+      // This case should ideally not be hit if data comes directly from a DB query where it's a string
+      currentImages = project.images;
     }
 
     const imagePathToRemove = `/uploads/portfolio_images/${imageFilenameToDelete}`;
