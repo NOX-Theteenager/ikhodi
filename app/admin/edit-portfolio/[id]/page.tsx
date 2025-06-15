@@ -546,7 +546,7 @@ export default function EditPortfolioPage() {
                               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                             />
                             <div className="border-2 border-dashed border-violet-mauve/30 rounded-lg p-3 sm:p-4 text-center hover:border-violet-mauve/50 smooth-transition"> {/* Adjusted padding */}
-                              <Upload className="h-5 sm:h-6 w-5 sm:h-6 text-violet-mauve mx-auto mb-1 sm:mb-2" /> {/* Adjusted size/margin */}
+                              <Upload className="h-5 sm:h-6 w-5 text-violet-mauve mx-auto mb-1 sm:mb-2" /> {/* Adjusted size/margin */}
                               <p className="text-xs sm:text-sm text-muted-foreground"> {/* Responsive text */}
                                 {galleryImageFiles && galleryImageFiles.length > 0
                                   ? `${galleryImageFiles.length} nouveau(x) fichier(s) sélectionné(s)`
