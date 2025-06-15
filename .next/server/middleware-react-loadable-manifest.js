@@ -1,1 +1,1 @@
-self.__REACT_LOADABLE_MANIFEST="{}"
+self.__REACT_LOADABLE_MANIFEST="{\"components\\\\AppWrapper.tsx -> @/components/IntroCinematic\":{\"id\":\"components\\\\AppWrapper.tsx -> @/components/IntroCinematic\",\"files\":[\"static/chunks/_app-pages-browser_components_IntroCinematic_tsx.js\"]},\"components\\\\AppWrapper.tsx -> @/components/optimized-security-provider\":{\"id\":\"components\\\\AppWrapper.tsx -> @/components/optimized-security-provider\",\"files\":[\"static/chunks/_app-pages-browser_components_optimized-security-provider_tsx.js\"]}}"

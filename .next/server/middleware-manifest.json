@@ -1,7 +1,5 @@
 {
-  "sortedMiddleware": [
-    "/"
-  ],
+  "version": 3,
   "middleware": {
     "/": {
       "files": [
@@ -17,9 +15,15 @@
         }
       ],
       "wasm": [],
-      "assets": []
+      "assets": [],
+      "env": {
+        "__NEXT_BUILD_ID": "development",
+        "NEXT_SERVER_ACTIONS_ENCRYPTION_KEY": "58JE78Zz0c2LRxsPUtkbrdTQfM6zl+I36fP3TCFT++0="
+      }
     }
   },
   "functions": {},
-  "version": 2
+  "sortedMiddleware": [
+    "/"
+  ]
 }

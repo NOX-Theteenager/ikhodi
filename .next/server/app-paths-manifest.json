@@ -1,9 +1,9 @@
 {
-  "/not-found": "app/not-found.js",
-  "/admin/portfolio/page": "app/admin/portfolio/page.js",
-  "/admin/login/page": "app/admin/login/page.js",
-  "/api/portfolio/route": "app/api/portfolio/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/admin/edit-portfolio/[id]/page": "app/admin/edit-portfolio/[id]/page.js",
+  "/admin/portfolio/page": "app/admin/portfolio/page.js",
   "/page": "app/page.js",
-  "/admin/add-portfolio/page": "app/admin/add-portfolio/page.js"
+  "/admin/add-portfolio/page": "app/admin/add-portfolio/page.js",
+  "/api/portfolio/route": "app/api/portfolio/route.js",
+  "/api/portfolio/[id]/route": "app/api/portfolio/[id]/route.js"
 }

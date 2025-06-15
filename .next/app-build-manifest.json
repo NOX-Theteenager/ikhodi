@@ -1,5 +1,10 @@
 {
   "pages": {
+    "/admin/edit-portfolio/[id]/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/admin/edit-portfolio/[id]/page.js"
+    ],
     "/layout": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -16,16 +21,6 @@
       "static/chunks/main-app.js",
       "static/chunks/app/admin/portfolio/loading.js"
     ],
-    "/admin/login/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/login/page.js"
-    ],
-    "/admin/edit-portfolio/[id]/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/admin/edit-portfolio/[id]/page.js"
-    ],
     "/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
@@ -36,10 +31,10 @@
       "static/chunks/main-app.js",
       "static/chunks/app/admin/add-portfolio/page.js"
     ],
-    "/not-found": [
+    "/_not-found/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/not-found.js"
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
