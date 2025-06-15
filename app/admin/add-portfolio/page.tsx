@@ -316,7 +316,7 @@ export default function AddPortfolioPage() {
                             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                           />
                           <div className="border-2 border-dashed border-rose-vif/30 rounded-lg p-4 sm:p-6 text-center hover:border-rose-vif/50 smooth-transition">
-                            <Upload className="h-6 sm:h-8 w-6 text-rose-vif mx-auto mb-1.5 sm:mb-2" />
+                            <Upload className="h-6 sm:h-8 w-6 sm:h-8 text-rose-vif mx-auto mb-1.5 sm:mb-2" />
                             <p className="text-xs sm:text-sm text-muted-foreground">Cliquez pour télécharger ou glissez-déposez</p>
                             {mainImageFile && (
                               <p className="text-xs text-rose-vif mt-2 truncate" title={mainImageFile.name}>Fichier sélectionné: {mainImageFile.name}</p>

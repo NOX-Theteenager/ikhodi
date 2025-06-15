@@ -35,10 +35,61 @@ function prepareProjectForDb(project: any): PortfolioProject {
 
 // Helper function to parse JSON fields from DB result
 function parseProjectFromDb(project: any): PortfolioProject {
+  let parsedImages: string[] = [];
+  if (project.images && typeof project.images === 'string') {
+    try {
+      // Only attempt to parse if it looks like a JSON array (starts with '[')
+      // or a JSON string (starts with '"').
+      if (project.images.trim().startsWith('[') || project.images.trim().startsWith('"')) {
+        parsedImages = JSON.parse(project.images);
+        // Ensure it's actually an array after parsing
+        if (!Array.isArray(parsedImages)) {
+            console.warn(`Project ID ${project.id}: 'images' field parsed from JSON string but is not an array: ${project.images}`);
+            parsedImages = []; // Default to empty array if parsed result is not an array
+        }
+      } else if (project.images.trim() !== '') {
+        // If it's a non-empty string but not a JSON array/string, log a warning.
+        // This indicates data might have been saved in an unexpected raw format.
+        console.warn(`Project ID ${project.id}: 'images' field is a string but not a valid JSON array string format: ${project.images}`);
+        // Optionally, if you expect single raw image paths and want to treat them as a gallery of one:
+        // parsedImages = [project.images.trim()];
+      }
+    } catch (e) {
+      console.error(`Project ID ${project.id}: Failed to parse 'images' JSON string: ${project.images}`, e);
+      // Default to empty array on parsing error
+      parsedImages = [];
+    }
+  } else if (Array.isArray(project.images)) {
+    // This case should ideally not be hit if data comes directly from a DB query where it's a string,
+    // but added for robustness if the function is ever called with already-parsed data.
+    parsedImages = project.images;
+  }
+
+  let parsedServices: string[] = [];
+  if (project.services && typeof project.services === 'string') {
+    try {
+      if (project.services.trim().startsWith('[') || project.services.trim().startsWith('"')) {
+        parsedServices = JSON.parse(project.services);
+        if (!Array.isArray(parsedServices)) {
+            console.warn(`Project ID ${project.id}: 'services' field parsed from JSON string but is not an array: ${project.services}`);
+            parsedServices = [];
+        }
+      } else if (project.services.trim() !== '') {
+        console.warn(`Project ID ${project.id}: 'services' field is a string but not a valid JSON array string format: ${project.services}`);
+      }
+    } catch (e) {
+      console.error(`Project ID ${project.id}: Failed to parse 'services' JSON string: ${project.services}`, e);
+      parsedServices = [];
+    }
+  } else if (Array.isArray(project.services)) {
+    parsedServices = project.services;
+  }
+
   return {
     ...project,
-    images: project.images ? JSON.parse(project.images) : [],
-    services: project.services ? JSON.parse(project.services) : [],
+    id: parseInt(project.id, 10), // Ensure id is a number if it comes as string from DB
+    images: parsedImages,
+    services: parsedServices,
   };
 }
 
