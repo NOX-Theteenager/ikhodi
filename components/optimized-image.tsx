@@ -206,7 +206,9 @@ export default function OptimizedImage({
   )
 
   return (
-    <div ref={ref} className={`relative overflow-hidden ${className}`}>
+    <div
+      ref={ref}
+      className={`relative overflow-hidden ${fill ? 'w-full h-full' : ''} ${className}`}>
       {hasError ? (
         <ErrorFallback />
       ) : !isIntersecting && !priority ? (
@@ -237,8 +239,8 @@ export default function OptimizedImage({
             <Image
               src={imageSrc || "/placeholder.svg"}
               alt={alt}
-              width={width}
-              height={height}
+              width={fill ? undefined : width}
+              height={fill ? undefined : height}
               fill={fill}
               quality={adaptiveQuality}
               sizes={responsiveSizes}
