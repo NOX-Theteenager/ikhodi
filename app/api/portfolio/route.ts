@@ -133,9 +133,15 @@ export async function POST(request: NextRequest) {
     );
 
     const insertedId = (result as any).insertId;
-    const createdProject = { ...newProject, id: insertedId };
-
-    return NextResponse.json(parseProjectFromDb(createdProject), { status: 201 });
+    // Construct the object to return, ensuring arrays are not double-parsed
+    const projectToReturn = {
+        ...newProject, // newProject already has services and images as arrays
+        id: insertedId,
+        // Ensure image and images are correctly set if they were processed
+        image: newProject.image || null,
+        images: newProject.images || [],
+    };
+    return NextResponse.json(projectToReturn, { status: 201 });
   } catch (error: any) {
     console.error('Failed to add new project to DB with image uploads:', error);
     return NextResponse.json({ message: 'Error adding new project: ' + error.message }, { status: 500 });
