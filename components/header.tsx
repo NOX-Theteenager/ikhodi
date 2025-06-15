@@ -60,6 +60,7 @@ export default function Header() {
             width={120}
             height={40}
             className="object-contain"
+            priority
           />
         </Link>
 
@@ -139,6 +140,7 @@ export default function Header() {
                       width={100}
                       height={30}
                       className="object-contain"
+                      priority
                     />
                   </div>
                 </div>

@@ -248,10 +248,6 @@ export default function OptimizedImage({
               className={className}
               onLoad={handleLoad}
               onError={handleError}
-              style={{
-                objectFit: "cover",
-                objectPosition: "center",
-              }}
             />
           </motion.div>
         </>

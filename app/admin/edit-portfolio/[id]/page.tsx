@@ -461,9 +461,9 @@ export default function EditPortfolioPage() {
                             <Image
                               src={projectData.image || "/placeholder.svg"}
                               alt="Image principale actuelle"
-                              layout="fill" // Use fill for responsiveness within aspect ratio container
-                              objectFit="contain"
-                              className="rounded-lg shadow-sm border border-rose-pale/50"
+                              fill
+                              sizes="(max-width: 400px) 100vw, 320px"
+                              className="rounded-lg shadow-sm border border-rose-pale/50 object-contain"
                             />
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 smooth-transition rounded-lg flex items-center justify-center">
                               <p className="text-white text-sm">Image actuelle</p>
@@ -509,9 +509,9 @@ export default function EditPortfolioPage() {
                                 <Image
                                   src={imgUrl || "/placeholder.svg"}
                                   alt={`Image galerie ${index + 1}`}
-                                  layout="fill" // Use fill for responsiveness
-                                  objectFit="cover"
-                                  className="rounded-lg shadow-sm border border-violet-mauve/30"
+                                  fill
+                                  sizes="(max-width: 640px) 33vw, 25vw"
+                                  className="rounded-lg shadow-sm border border-violet-mauve/30 object-cover"
                                 />
                                 <button
                                   type="button"

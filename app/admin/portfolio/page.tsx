@@ -211,6 +211,7 @@ export default function AdminPortfolioListPage() {
                   fill
                   className="object-cover group-hover:scale-105 smooth-transition"
                   quality={75}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-rose-pale/30 to-violet-mauve/20">
