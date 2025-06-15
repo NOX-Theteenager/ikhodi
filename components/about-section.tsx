@@ -18,19 +18,19 @@ export default function AboutSection() {
   const teamMembers = [
     {
       name: "Stephane NGUETSA",
-      image: "/images/stephane.jpg",
+      image: "/images/equipe1.png",
     },
     {
       name: "Vanessa NODEM",
-      image: "/images/stephane.jpg",
+      image: "/images/equipe2.png",
     },
     {
       name: "Amina",
-      image: "/images/stephane.jpg",
+      image: "/images/equipe3.png",
     },
     {
       name: "David Leroy",
-      image: "/images/david.jpg",
+      image: "/images/equipe4.png",
     },
   ]
 
