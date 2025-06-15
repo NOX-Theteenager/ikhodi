@@ -263,7 +263,8 @@ export async function PUT(
         }
       }
       // If new files are uploaded, these become the new gallery. Old ones should be cleared if not managed by URLs.
-      updateData.images = newGalleryPaths;
+      // Append new images to existing ones
+      updateData.images = [...(projectToUpdate.images || []), ...newGalleryPaths];
     } else if (formData.has('images_urls')) {
       const galleryImageUrlsString = formData.get('images_urls') as string;
       updateData.images = galleryImageUrlsString ? galleryImageUrlsString.split(',').map(s => s.trim()).filter(s => s) : [];
